@@ -1,0 +1,22 @@
+extern (C):
+
+cpBool cpConstraintIsPinJoint (const(cpConstraint)* constraint);
+cpPinJoint* cpPinJointAlloc ();
+cpPinJoint* cpPinJointInit (cpPinJoint* joint, cpBody* a, cpBody* b, cpVect anchorA, cpVect anchorB);
+cpConstraint* cpPinJointNew (cpBody* a, cpBody* b, cpVect anchorA, cpVect anchorB);
+cpVect cpPinJointGetAnchorA (const(cpConstraint)* constraint);
+void cpPinJointSetAnchorA (cpConstraint* constraint, cpVect anchorA);
+cpVect cpPinJointGetAnchorB (const(cpConstraint)* constraint);
+void cpPinJointSetAnchorB (cpConstraint* constraint, cpVect anchorB);
+cpFloat cpPinJointGetDist (const(cpConstraint)* constraint);
+void cpPinJointSetDist (cpConstraint* constraint, cpFloat dist);
+cpBool cpConstraintIsPinJoint (const(cpConstraint)* constraint);
+cpPinJoint* cpPinJointAlloc ();
+cpPinJoint* cpPinJointInit (cpPinJoint* joint, cpBody* a, cpBody* b, cpVect anchorA, cpVect anchorB);
+cpConstraint* cpPinJointNew (cpBody* a, cpBody* b, cpVect anchorA, cpVect anchorB);
+cpVect cpPinJointGetAnchorA (const(cpConstraint)* constraint);
+void cpPinJointSetAnchorA (cpConstraint* constraint, cpVect anchorA);
+cpVect cpPinJointGetAnchorB (const(cpConstraint)* constraint);
+void cpPinJointSetAnchorB (cpConstraint* constraint, cpVect anchorB);
+cpFloat cpPinJointGetDist (const(cpConstraint)* constraint);
+void cpPinJointSetDist (cpConstraint* constraint, cpFloat dist);
