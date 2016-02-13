@@ -1,3 +1,4 @@
+module chipmunk.cpSlideJoint;
 extern (C):
 
 cpBool cpConstraintIsSlideJoint (const(cpConstraint)* constraint);

@@ -1,3 +1,4 @@
+module chipmunk.cpConstraint;
 extern (C):
 
 alias void function (cpConstraint*, cpSpace*) cpConstraintPreSolveFunc;

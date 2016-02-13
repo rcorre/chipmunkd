@@ -1,3 +1,4 @@
+module chipmunk.cpBB;
 extern (C):
 
 alias cpBB cpBB;

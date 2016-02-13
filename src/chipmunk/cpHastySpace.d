@@ -1,3 +1,4 @@
+module chipmunk.cpHastySpace;
 import core.stdc.config;
 
 extern (C):

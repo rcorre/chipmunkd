@@ -1,3 +1,4 @@
+module chipmunk.cpRotaryLimitJoint;
 extern (C):
 
 cpBool cpConstraintIsRotaryLimitJoint (const(cpConstraint)* constraint);

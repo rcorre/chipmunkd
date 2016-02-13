@@ -1,3 +1,4 @@
+module chipmunk.cpGrooveJoint;
 extern (C):
 
 cpBool cpConstraintIsGrooveJoint (const(cpConstraint)* constraint);

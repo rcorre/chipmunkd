@@ -1,3 +1,4 @@
+module chipmunk.cpPivotJoint;
 extern (C):
 
 cpBool cpConstraintIsPivotJoint (const(cpConstraint)* constraint);

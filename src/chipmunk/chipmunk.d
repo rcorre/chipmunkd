@@ -1,3 +1,4 @@
+module chipmunk.chipmunk;
 extern (C):
 
 alias cpArray cpArray;

@@ -1,3 +1,4 @@
+module chipmunk.cpDampedRotarySpring;
 extern (C):
 
 alias double function (cpConstraint*, double) cpDampedRotarySpringTorqueFunc;

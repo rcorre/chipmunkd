@@ -1,3 +1,4 @@
+module chipmunk.cpVect;
 extern (C):
 
 extern __gshared const cpVect cpvzero;

@@ -1,3 +1,4 @@
+module chipmunk.chipmunk_types;
 import core.stdc.config;
 
 extern (C):

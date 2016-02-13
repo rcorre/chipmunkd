@@ -1,3 +1,4 @@
+module chipmunk.cpSpace;
 extern (C):
 
 alias ubyte function (cpArbiter*, cpSpace*, void*) cpCollisionBeginFunc;

@@ -1,3 +1,4 @@
+module chipmunk.cpShape;
 extern (C):
 
 alias cpPointQueryInfo cpPointQueryInfo;

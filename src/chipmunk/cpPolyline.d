@@ -1,3 +1,4 @@
+module chipmunk.cpPolyline;
 import chipmunk.cpVect;
 
 extern (C):

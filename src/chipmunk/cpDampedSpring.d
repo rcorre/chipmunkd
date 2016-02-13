@@ -1,3 +1,4 @@
+module chipmunk.cpDampedSpring;
 extern (C):
 
 alias double function (cpConstraint*, double) cpDampedSpringForceFunc;

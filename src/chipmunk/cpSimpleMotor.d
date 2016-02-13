@@ -1,3 +1,4 @@
+module chipmunk.cpSimpleMotor;
 extern (C):
 
 alias cpSimpleMotor cpSimpleMotor;

@@ -1,3 +1,4 @@
+module chipmunk.cpPolyShape;
 extern (C):
 
 cpPolyShape* cpPolyShapeAlloc ();

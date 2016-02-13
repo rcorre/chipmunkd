@@ -1,3 +1,4 @@
+module chipmunk.cpRobust;
 extern (C):
 
 cpBool cpCheckPointGreater (const cpVect a, const cpVect b, const cpVect c);

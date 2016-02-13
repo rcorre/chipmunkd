@@ -1,3 +1,4 @@
+module chipmunk.cpSpatialIndex;
 import core.stdc.config;
 
 extern (C):

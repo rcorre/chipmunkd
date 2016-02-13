@@ -1,3 +1,4 @@
+module chipmunk.cpRatchetJoint;
 extern (C):
 
 cpBool cpConstraintIsRatchetJoint (const(cpConstraint)* constraint);

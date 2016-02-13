@@ -1,3 +1,4 @@
+module chipmunk.chipmunk_structs;
 extern (C):
 
 alias cpShapeType cpShapeType;

@@ -1,3 +1,4 @@
+module chipmunk.cpGearJoint;
 extern (C):
 
 cpBool cpConstraintIsGearJoint (const(cpConstraint)* constraint);

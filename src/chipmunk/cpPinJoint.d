@@ -1,3 +1,4 @@
+module chipmunk.cpPinJoint;
 extern (C):
 
 cpBool cpConstraintIsPinJoint (const(cpConstraint)* constraint);
