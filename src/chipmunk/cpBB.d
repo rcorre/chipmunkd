@@ -1,7 +1,8 @@
 module chipmunk.cpBB;
-extern (C):
 
-alias cpBB cpBB;
+import chipmunk.chipmunk_types;
+
+extern (C):
 
 struct cpBB
 {

@@ -1,6 +1,10 @@
 module chipmunk.cpMarch;
 import core.stdc.config;
 
+import chipmunk.chipmunk_types;
+import chipmunk.chipmunk_structs;
+import chipmunk.cpBB;
+
 extern (C):
 
 alias double function (cpVect, void*) cpMarchSampleFunc;

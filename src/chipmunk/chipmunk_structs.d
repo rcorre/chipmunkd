@@ -1,20 +1,27 @@
 module chipmunk.chipmunk_structs;
+
+import chipmunk.chipmunk;
+import chipmunk.chipmunk_types;
+import chipmunk.cpBB;
+import chipmunk.cpShape;
+import chipmunk.cpBody;
+import chipmunk.cpSpace;
+import chipmunk.cpConstraint;
+import chipmunk.cpDampedSpring;
+import chipmunk.cpDampedRotarySpring;
+import chipmunk.cpSpatialIndex;
+
 extern (C):
 
-alias cpShapeType cpShapeType;
 alias cpBB function (cpShape*, cpTransform) cpShapeCacheDataImpl;
 alias void function (cpShape*) cpShapeDestroyImpl;
 alias void function (const(cpShape)*, cpVect, cpPointQueryInfo*) cpShapePointQueryImpl;
 alias void function (const(cpShape)*, cpVect, cpVect, double, cpSegmentQueryInfo*) cpShapeSegmentQueryImpl;
-alias cpShapeClass cpShapeClass;
 alias void function (cpConstraint*, double) cpConstraintPreStepImpl;
 alias void function (cpConstraint*, double) cpConstraintApplyCachedImpulseImpl;
 alias void function (cpConstraint*, double) cpConstraintApplyImpulseImpl;
 alias double function (cpConstraint*) cpConstraintGetImpulseImpl;
-alias cpConstraintClass cpConstraintClass;
-alias cpContactBufferHeader cpContactBufferHeader;
 alias void function (cpArbiter*) cpSpaceArbiterApplyImpulseFunc;
-alias cpPostStepCallback cpPostStepCallback;
 
 enum cpArbiterState
 {

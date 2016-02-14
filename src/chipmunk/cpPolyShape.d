@@ -1,4 +1,9 @@
 module chipmunk.cpPolyShape;
+
+import chipmunk.chipmunk_types;
+import chipmunk.chipmunk_structs;
+import chipmunk.cpBB;
+
 extern (C):
 
 cpPolyShape* cpPolyShapeAlloc ();

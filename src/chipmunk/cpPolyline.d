@@ -1,10 +1,9 @@
 module chipmunk.cpPolyline;
+
 import chipmunk.cpVect;
+import chipmunk.chipmunk_types;
 
 extern (C):
-
-alias cpPolyline cpPolyline;
-alias cpPolylineSet cpPolylineSet;
 
 struct cpPolyline
 {

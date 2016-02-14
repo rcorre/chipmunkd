@@ -1,8 +1,10 @@
 module chipmunk.cpConstraint;
+
+import chipmunk.chipmunk_types;
+import chipmunk.chipmunk_structs;
+
 extern (C):
 
-alias void function (cpConstraint*, cpSpace*) cpConstraintPreSolveFunc;
-alias void function (cpConstraint*, cpSpace*) cpConstraintPostSolveFunc;
 alias void function (cpConstraint*, cpSpace*) cpConstraintPreSolveFunc;
 alias void function (cpConstraint*, cpSpace*) cpConstraintPostSolveFunc;
 

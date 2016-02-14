@@ -1,4 +1,11 @@
 module chipmunk.cpSpace;
+
+import chipmunk.chipmunk_types;
+import chipmunk.chipmunk_structs;
+import chipmunk.cpArbiter;
+import chipmunk.cpShape;
+import chipmunk.cpBB;
+
 extern (C):
 
 alias ubyte function (cpArbiter*, cpSpace*, void*) cpCollisionBeginFunc;
@@ -13,15 +20,12 @@ alias void function (cpShape*, cpContactPointSet*, void*) cpSpaceShapeQueryFunc;
 alias void function (cpBody*, void*) cpSpaceBodyIteratorFunc;
 alias void function (cpShape*, void*) cpSpaceShapeIteratorFunc;
 alias void function (cpConstraint*, void*) cpSpaceConstraintIteratorFunc;
-alias cpSpaceDebugColor cpSpaceDebugColor;
 alias void function (cpVect, double, double, cpSpaceDebugColor, cpSpaceDebugColor, void*) cpSpaceDebugDrawCircleImpl;
 alias void function (cpVect, cpVect, cpSpaceDebugColor, void*) cpSpaceDebugDrawSegmentImpl;
 alias void function (cpVect, cpVect, double, cpSpaceDebugColor, cpSpaceDebugColor, void*) cpSpaceDebugDrawFatSegmentImpl;
 alias void function (int, const(cpVect)*, double, cpSpaceDebugColor, cpSpaceDebugColor, void*) cpSpaceDebugDrawPolygonImpl;
 alias void function (double, cpVect, cpSpaceDebugColor, void*) cpSpaceDebugDrawDotImpl;
 alias cpSpaceDebugColor function (cpShape*, void*) cpSpaceDebugDrawColorForShapeImpl;
-alias cpSpaceDebugDrawFlags cpSpaceDebugDrawFlags;
-alias cpSpaceDebugDrawOptions cpSpaceDebugDrawOptions;
 
 enum cpSpaceDebugDrawFlags
 {

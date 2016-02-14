@@ -1,11 +1,9 @@
 module chipmunk.cpSimpleMotor;
+
+import chipmunk.chipmunk_types;
+import chipmunk.chipmunk_structs;
+
 extern (C):
-
-alias cpSimpleMotor cpSimpleMotor;
-alias cpSimpleMotor cpSimpleMotor;
-
-struct cpSimpleMotor;
-
 
 cpBool cpConstraintIsSimpleMotor (const(cpConstraint)* constraint);
 cpSimpleMotor* cpSimpleMotorAlloc ();

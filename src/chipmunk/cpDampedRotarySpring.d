@@ -1,7 +1,10 @@
 module chipmunk.cpDampedRotarySpring;
+
+import chipmunk.chipmunk_types;
+import chipmunk.chipmunk_structs;
+
 extern (C):
 
-alias double function (cpConstraint*, double) cpDampedRotarySpringTorqueFunc;
 alias double function (cpConstraint*, double) cpDampedRotarySpringTorqueFunc;
 
 cpBool cpConstraintIsDampedRotarySpring (const(cpConstraint)* constraint);

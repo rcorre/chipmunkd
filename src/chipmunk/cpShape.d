@@ -1,9 +1,12 @@
 module chipmunk.cpShape;
-extern (C):
 
-alias cpPointQueryInfo cpPointQueryInfo;
-alias cpSegmentQueryInfo cpSegmentQueryInfo;
-alias cpShapeFilter cpShapeFilter;
+import chipmunk.chipmunk;
+import chipmunk.chipmunk_types;
+import chipmunk.chipmunk_structs;
+import chipmunk.cpBB;
+import chipmunk.cpArbiter;
+
+extern (C):
 
 extern __gshared const cpShapeFilter CP_SHAPE_FILTER_ALL;
 extern __gshared const cpShapeFilter CP_SHAPE_FILTER_NONE;

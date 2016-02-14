@@ -1,12 +1,12 @@
 module chipmunk.cpHastySpace;
 import core.stdc.config;
 
+import chipmunk.chipmunk_types;
+import chipmunk.chipmunk_structs;
+
 extern (C):
 
-alias cpHastySpace cpHastySpace;
-
 struct cpHastySpace;
-
 
 cpSpace* cpHastySpaceNew ();
 void cpHastySpaceFree (cpSpace* space);

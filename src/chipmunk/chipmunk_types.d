@@ -12,9 +12,6 @@ alias c_ulong cpCollisionType;
 alias c_ulong cpGroup;
 alias uint cpBitmask;
 alias uint cpTimestamp;
-alias cpVect cpVect;
-alias cpTransform cpTransform;
-alias cpMat2x2 cpMat2x2;
 
 struct cpVect
 {

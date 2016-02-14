@@ -1,4 +1,8 @@
 module chipmunk.cpPinJoint;
+
+import chipmunk.chipmunk_types;
+import chipmunk.chipmunk_structs;
+
 extern (C):
 
 cpBool cpConstraintIsPinJoint (const(cpConstraint)* constraint);

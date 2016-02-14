@@ -1,96 +1,14 @@
 module chipmunk.chipmunk;
+
+import chipmunk.cpBB;
+
+import chipmunk.chipmunk_types;
+import chipmunk.chipmunk_structs;
+import chipmunk.chipmunk_private;
+
 extern (C):
 
-alias cpArray cpArray;
-alias cpHashSet cpHashSet;
-alias cpBody cpBody;
-alias cpShape cpShape;
-alias cpCircleShape cpCircleShape;
-alias cpSegmentShape cpSegmentShape;
-alias cpPolyShape cpPolyShape;
-alias cpConstraint cpConstraint;
-alias cpPinJoint cpPinJoint;
-alias cpSlideJoint cpSlideJoint;
-alias cpPivotJoint cpPivotJoint;
-alias cpGrooveJoint cpGrooveJoint;
-alias cpDampedSpring cpDampedSpring;
-alias cpDampedRotarySpring cpDampedRotarySpring;
-alias cpRotaryLimitJoint cpRotaryLimitJoint;
-alias cpRatchetJoint cpRatchetJoint;
-alias cpGearJoint cpGearJoint;
-alias cpSimpleMotorJoint cpSimpleMotorJoint;
-alias cpCollisionHandler cpCollisionHandler;
-alias cpContactPointSet cpContactPointSet;
-alias cpArbiter cpArbiter;
-alias cpSpace cpSpace;
-
 extern __gshared const(char)* cpVersionString;
-
-struct cpRotaryLimitJoint;
-
-
-struct cpSlideJoint;
-
-
-struct cpRatchetJoint;
-
-
-struct cpGearJoint;
-
-
-struct cpSimpleMotorJoint;
-
-
-struct cpArray;
-
-
-struct cpDampedRotarySpring;
-
-
-struct cpCircleShape;
-
-
-struct cpHashSet;
-
-
-struct cpConstraint;
-
-
-struct cpPivotJoint;
-
-
-struct cpContactPointSet;
-
-
-struct cpGrooveJoint;
-
-
-struct cpSpace;
-
-
-struct cpArbiter;
-
-
-struct cpCollisionHandler;
-
-
-struct cpBody;
-
-
-struct cpPolyShape;
-
-
-struct cpDampedSpring;
-
-
-struct cpShape;
-
-
-struct cpSegmentShape;
-
-
-struct cpPinJoint;
-
 
 void cpMessage (const(char)* condition, const(char)* file, int line, int isError, int isHardError, const(char)* message, ...);
 cpFloat cpMomentForCircle (cpFloat m, cpFloat r1, cpFloat r2, cpVect offset);
@@ -104,3 +22,22 @@ cpFloat cpMomentForBox (cpFloat m, cpFloat width, cpFloat height);
 cpFloat cpMomentForBox2 (cpFloat m, cpBB box);
 int cpConvexHull (int count, const(cpVect)* verts, cpVect* result, int* first, cpFloat tol);
 cpVect cpClosetPointOnSegment (const cpVect p, const cpVect a, const cpVect b);
+
+// In the C project, these are defined in a .c file and typedef'd in chipmunk.h
+struct cpHashSetBin {
+	void *elt;
+	cpHashValue hash;
+	cpHashSetBin *next;
+};
+
+struct cpHashSet {
+	uint entries, size;
+	
+	cpHashSetEqlFunc eql;
+	void *default_value;
+	
+	cpHashSetBin **table;
+	cpHashSetBin *pooledBins;
+	
+	cpArray *allocatedBuffers;
+};

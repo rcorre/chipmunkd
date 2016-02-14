@@ -1,4 +1,8 @@
 module chipmunk.cpTransform;
+
+import chipmunk.chipmunk_types;
+import chipmunk.cpBB;
+
 extern (C):
 
 extern __gshared const cpTransform cpTransformIdentity;

@@ -1,7 +1,12 @@
 module chipmunk.cpDampedSpring;
+
+import chipmunk.chipmunk_types;
+import chipmunk.chipmunk_structs;
+import chipmunk.cpConstraint;
+import chipmunk.cpBB;
+
 extern (C):
 
-alias double function (cpConstraint*, double) cpDampedSpringForceFunc;
 alias double function (cpConstraint*, double) cpDampedSpringForceFunc;
 
 cpBool cpConstraintIsDampedSpring (const(cpConstraint)* constraint);

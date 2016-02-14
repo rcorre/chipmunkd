@@ -1,18 +1,17 @@
 module chipmunk.cpSpatialIndex;
 import core.stdc.config;
 
+import chipmunk.chipmunk_types;
+import chipmunk.chipmunk_structs;
+import chipmunk.cpBB;
+
 extern (C):
 
 alias cpBB function (void*) cpSpatialIndexBBFunc;
 alias void function (void*, void*) cpSpatialIndexIteratorFunc;
 alias uint function (void*, void*, uint, void*) cpSpatialIndexQueryFunc;
 alias double function (void*, void*, void*) cpSpatialIndexSegmentQueryFunc;
-alias cpSpatialIndexClass cpSpatialIndexClass;
-alias cpSpatialIndex cpSpatialIndex;
-alias cpSpaceHash cpSpaceHash;
-alias cpBBTree cpBBTree;
 alias cpVect function (void*) cpBBTreeVelocityFunc;
-alias cpSweep1D cpSweep1D;
 alias void function (cpSpatialIndex*) cpSpatialIndexDestroyImpl;
 alias int function (cpSpatialIndex*) cpSpatialIndexCountImpl;
 alias void function (cpSpatialIndex*, void function (void*, void*), void*) cpSpatialIndexEachImpl;
