@@ -1,9 +1,28 @@
 module chipmunk.chipmunk_types;
+
 import core.stdc.config;
+import core.stdc.math;
+import core.stdc.float_;
 
 extern (C):
 
-alias double cpFloat;
+enum CP_NO_GROUP = 0;
+
+// TODO: support CP_USE_DOUBLES? Right now I just assume we're using doubles.
+
+alias cpFloat = double;
+alias cpfsqrt = sqrt;
+alias cpfsin = sin;
+alias cpfcos = cos;
+alias cpfacos = acos;
+alias cpfatan2 = atan2;
+alias cpfmod = fmod;
+alias cpfexp = exp;
+alias cpfpow = pow;
+alias cpffloor = floor;
+alias cpfceil = ceil;
+enum CPFLOAT_MIN = DBL_MIN;
+
 alias c_ulong cpHashValue;
 alias uint cpCollisionID;
 alias ubyte cpBool;
