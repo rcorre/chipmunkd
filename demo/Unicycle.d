@@ -19,8 +19,8 @@
  * SOFTWARE.
  */
  
-#include "chipmunk/chipmunk.h"
-#include "ChipmunkDemo.h"
+import chipmunk.chipmunk;
+import ChipmunkDemo;
 
 static cpBody *balance_body;
 static cpFloat balance_sin = 0.0;
@@ -35,7 +35,7 @@ static cpConstraint *motor;
 */
 
 
-static inline cpFloat
+static cpFloat
 bias_coef(cpFloat errorBias, cpFloat dt)
 {
 	return 1.0f - cpfpow(errorBias, dt);
@@ -82,7 +82,7 @@ init(void)
 	cpSpaceSetGravity(space, cpv(0, -500));
 	
 	{
-		cpShape *shape = NULL;
+		cpShape *shape = null;
 		cpBody *staticBody = cpSpaceGetStaticBody(space);
 		
 		shape = cpSpaceAddShape(space, cpSegmentShapeNew(staticBody, cpv(-3200,-240), cpv(3200,-240), 0.0f));
@@ -127,7 +127,7 @@ init(void)
 		balance_body = cpSpaceAddBody(space, cpBodyNew(mass, moment));
 		cpBodySetPosition(balance_body, cpv(0.0, cpBodyGetPosition(wheel_body).y + cog_offset));
 		
-		cpShape *shape = NULL;
+		cpShape *shape = null;
 		
 		shape = cpSpaceAddShape(space, cpBoxShapeNew2(balance_body, bb1, 0.0));
 		cpShapeSetFriction(shape, 1.0);

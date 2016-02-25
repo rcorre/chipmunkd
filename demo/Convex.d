@@ -19,12 +19,12 @@
  * SOFTWARE.
  */
  
-#include "chipmunk/chipmunk.h"
-#include "chipmunk/chipmunk_unsafe.h"
+import chipmunk.chipmunk;
+import chipmunk.chipmunk_unsafe;
 
-#include "ChipmunkDemo.h"
+import ChipmunkDemo;
 
-#define DENSITY (1.0/10000.0)
+enum DENSITY = (1.0/10000.0);
 
 static cpShape *shape;
 
@@ -33,31 +33,31 @@ update(cpSpace *space, double dt)
 {
 	cpFloat tolerance = 2.0;
 	
-	if(ChipmunkDemoRightClick && cpShapePointQuery(shape, ChipmunkDemoMouse, NULL) > tolerance){
-		cpBody *body = cpShapeGetBody(shape);
+	if(ChipmunkDemoRightClick && cpShapePointQuery(shape, ChipmunkDemoMouse, null) > tolerance){
+		cpBody *body_ = cpShapeGetBody(shape);
 		int count = cpPolyShapeGetCount(shape);
 		
 		// Allocate the space for the new vertexes on the stack.
-		cpVect *verts = (cpVect *)alloca((count + 1)*sizeof(cpVect));
+		cpVect *verts = cast(cpVect *)alloca((count + 1)*sizeof(cpVect));
 		
 		for(int i=0; i<count; i++){
 			verts[i] = cpPolyShapeGetVert(shape, i);
 		}
 		
-		verts[count] = cpBodyWorldToLocal(body, ChipmunkDemoMouse);
+		verts[count] = cpBodyWorldToLocal(body_, ChipmunkDemoMouse);
 		
 		// This function builds a convex hull for the vertexes.
 		// Because the result array is the same as verts, it will reduce it in place.
-		int hullCount = cpConvexHull(count + 1, verts, verts, NULL, tolerance);
+		int hullCount = cpConvexHull(count + 1, verts, verts, null, tolerance);
 		
-		// Figure out how much to shift the body by.
+		// Figure out how much to shift the body_ by.
 		cpVect centroid = cpCentroidForPoly(hullCount, verts);
 		
-		// Recalculate the body properties to match the updated shape.
+		// Recalculate the body_ properties to match the updated shape.
 		cpFloat mass = cpAreaForPoly(hullCount, verts, 0.0f)*DENSITY;
-		cpBodySetMass(body, mass);
-		cpBodySetMoment(body, cpMomentForPoly(mass, hullCount, verts, cpvneg(centroid), 0.0f));
-		cpBodySetPosition(body, cpBodyLocalToWorld(body, centroid));
+		cpBodySetMass(body_, mass);
+		cpBodySetMoment(body_, cpMomentForPoly(mass, hullCount, verts, cpvneg(centroid), 0.0f));
+		cpBodySetPosition(body_, cpBodyLocalToWorld(body_, centroid));
 		
 		// Use the setter function from chipmunk_unsafe.h.
 		// You could also remove and recreate the shape if you wanted.
@@ -78,7 +78,7 @@ init(void)
 	cpSpaceSetSleepTimeThreshold(space, 0.5f);
 	cpSpaceSetCollisionSlop(space, 0.5f);
 	
-	cpBody *body, *staticBody = cpSpaceGetStaticBody(space);
+	cpBody *body_, staticBody = cpSpaceGetStaticBody(space);
 	
 	// Create segments around the edge of the screen.
 	shape = cpSpaceAddShape(space, cpSegmentShapeNew(staticBody, cpv(-320,-240), cpv(320,-240), 0.0f));
@@ -91,9 +91,9 @@ init(void)
 	cpFloat mass = width*height*DENSITY;
 	cpFloat moment = cpMomentForBox(mass, width, height);
 	
-	body = cpSpaceAddBody(space, cpBodyNew(mass, moment));
+	body_ = cpSpaceAddBody(space, cpBodyNew(mass, moment));
 	
-	shape = cpSpaceAddShape(space, cpBoxShapeNew(body, width, height, 0.0));
+	shape = cpSpaceAddShape(space, cpBoxShapeNew(body_, width, height, 0.0));
 	cpShapeSetFriction(shape, 0.6f);
 		
 	return space;

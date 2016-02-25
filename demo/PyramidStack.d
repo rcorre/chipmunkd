@@ -19,9 +19,9 @@
  * SOFTWARE.
  */
  
-#include "chipmunk/chipmunk.h"
-#include "chipmunk/chipmunk_unsafe.h"
-#include "ChipmunkDemo.h"
+import chipmunk.chipmunk;
+import chipmunk.chipmunk_unsafe;
+import ChipmunkDemo;
 
 static void
 update(cpSpace *space, double dt)
@@ -38,7 +38,7 @@ init(void)
 	cpSpaceSetSleepTimeThreshold(space, 0.5f);
 	cpSpaceSetCollisionSlop(space, 0.5f);
 	
-	cpBody *body, *staticBody = cpSpaceGetStaticBody(space);
+	cpBody *body_, staticBody = cpSpaceGetStaticBody(space);
 	cpShape *shape;
 	
 	// Create segments around the edge of the screen.
@@ -60,10 +60,10 @@ init(void)
 	// Add lots of boxes.
 	for(int i=0; i<14; i++){
 		for(int j=0; j<=i; j++){
-			body = cpSpaceAddBody(space, cpBodyNew(1.0f, cpMomentForBox(1.0f, 30.0f, 30.0f)));
-			cpBodySetPosition(body, cpv(j*32 - i*16, 300 - i*32));
+			body_ = cpSpaceAddBody(space, cpBodyNew(1.0f, cpMomentForBox(1.0f, 30.0f, 30.0f)));
+			cpBodySetPosition(body_, cpv(j*32 - i*16, 300 - i*32));
 			
-			shape = cpSpaceAddShape(space, cpBoxShapeNew(body, 30.0f, 30.0f, 0.5f));
+			shape = cpSpaceAddShape(space, cpBoxShapeNew(body_, 30.0f, 30.0f, 0.5f));
 			cpShapeSetElasticity(shape, 0.0f);
 			cpShapeSetFriction(shape, 0.8f);
 		}
@@ -71,10 +71,10 @@ init(void)
 	
 	// Add a ball to make things more interesting
 	cpFloat radius = 15.0f;
-	body = cpSpaceAddBody(space, cpBodyNew(10.0f, cpMomentForCircle(10.0f, 0.0f, radius, cpvzero)));
-	cpBodySetPosition(body, cpv(0, -240 + radius+5));
+	body_ = cpSpaceAddBody(space, cpBodyNew(10.0f, cpMomentForCircle(10.0f, 0.0f, radius, cpvzero)));
+	cpBodySetPosition(body_, cpv(0, -240 + radius+5));
 
-	shape = cpSpaceAddShape(space, cpCircleShapeNew(body, radius, cpvzero));
+	shape = cpSpaceAddShape(space, cpCircleShapeNew(body_, radius, cpvzero));
 	cpShapeSetElasticity(shape, 0.0f);
 	cpShapeSetFriction(shape, 0.9f);
 	

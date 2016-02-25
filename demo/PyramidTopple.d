@@ -19,8 +19,8 @@
  * SOFTWARE.
  */
  
-#include "chipmunk/chipmunk.h"
-#include "ChipmunkDemo.h"
+import chipmunk.chipmunk;
+import ChipmunkDemo;
 
 static void
 update(cpSpace *space, double dt)
@@ -28,8 +28,8 @@ update(cpSpace *space, double dt)
 	cpSpaceStep(space, dt);
 }
 
-#define WIDTH 4.0f
-#define HEIGHT 30.0f
+enum WIDTH = 4.0f;
+enum HEIGHT = 30.0f;
 
 static void
 add_domino(cpSpace *space, cpVect pos, cpBool flipped)
@@ -38,10 +38,10 @@ add_domino(cpSpace *space, cpVect pos, cpBool flipped)
 	cpFloat radius = 0.5f;
 	cpFloat moment = cpMomentForBox(mass, WIDTH, HEIGHT);
 	
-	cpBody *body = cpSpaceAddBody(space, cpBodyNew(mass, moment));
-	cpBodySetPosition(body, pos);
+	cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, moment));
+	cpBodySetPosition(body_, pos);
 
-	cpShape *shape = (flipped ? cpBoxShapeNew(body, HEIGHT, WIDTH, 0.0) : cpBoxShapeNew(body, WIDTH - radius*2.0f, HEIGHT, radius));
+	cpShape *shape = (flipped ? cpBoxShapeNew(body_, HEIGHT, WIDTH, 0.0) : cpBoxShapeNew(body_, WIDTH - radius*2.0f, HEIGHT, radius));
 	cpSpaceAddShape(space, shape);
 	cpShapeSetElasticity(shape, 0.0f);
 	cpShapeSetFriction(shape, 0.6f);

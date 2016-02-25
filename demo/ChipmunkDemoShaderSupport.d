@@ -19,16 +19,18 @@
  * SOFTWARE.
  */
 
-#include <limits.h>
-#include <string.h>
-#include <stdio.h>
+import core.stdc.limits;
+import core.stdc.string;
+import core.stdc.stdio;
 
-#include "GL/glew.h"
-#include "GL/glfw.h"
+import GL.glew;
+import GL.glfw;
 
-#include "chipmunk/chipmunk.h"
+import chipmunk.chipmunk;
 
-#include "ChipmunkDemoShaderSupport.h"
+import ChipmunkDemoShaderSupport;
+
+alias CHECK_GL_ERRORS = CheckGLErrors;
 
 void
 CheckGLErrors(void)
@@ -51,8 +53,8 @@ CheckError(GLint obj, GLenum status, PFNGLGETSHADERIVPROC getiv, PFNGLGETSHADERI
 		GLint length;
 		getiv(obj, GL_INFO_LOG_LENGTH, &length);
 		
-		char *log = (char *)alloca(length);
-		getInfoLog(obj, length, NULL, log);
+		char *log = cast(char *)alloca(length);
+		getInfoLog(obj, length, null, log);
 		
 		fprintf(stderr, "Shader compile error for 0x%04X: %s\n", status, log);
 		return cpFalse;
@@ -66,7 +68,7 @@ CompileShader(GLenum type, const char *source)
 {
 	GLint shader = glCreateShader(type);
 	
-	glShaderSource(shader, 1, &source, NULL);
+	glShaderSource(shader, 1, &source, null);
 	glCompileShader(shader);
 	
 	// TODO: return placeholder shader instead?
@@ -98,7 +100,7 @@ ValidateProgram(GLint program)
 }
 
 void
-SetAttribute(GLuint program, char const *name, GLint size, GLenum gltype, GLsizei stride, GLvoid *offset)
+SetAttribute(GLuint program, const char *name, GLint size, GLenum gltype, GLsizei stride, GLvoid *offset)
 {
 	GLint index = glGetAttribLocation(program, name);
 	glEnableVertexAttribArray(index);

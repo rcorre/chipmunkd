@@ -19,15 +19,15 @@
  * SOFTWARE.
  */
 
-#include <string.h>
+import core.stdc.string;
 
-#include "chipmunk/chipmunk.h"
+import chipmunk.chipmunk;
 
-#include "ChipmunkDemo.h"
+import ChipmunkDemo;
 
-#define DENSITY (1.0/10000.0)
+enum DENSITY = (1.0/10000.0);
 
-#define MAX_VERTEXES_PER_VORONOI 16
+enum MAX_VERTEXES_PER_VORONOI = 16;
 
 struct WorleyContex {
 	uint32_t seed;
@@ -37,7 +37,7 @@ struct WorleyContex {
 	cpVect focus;
 };
 
-static inline cpVect
+static cpVect
 HashVect(uint32_t x, uint32_t y, uint32_t seed)
 {
 //	cpFloat border = 0.21f;
@@ -45,21 +45,21 @@ HashVect(uint32_t x, uint32_t y, uint32_t seed)
 	uint32_t h = (x*1640531513 ^ y*2654435789) + seed;
 	
 	return cpv(
-		cpflerp(border, 1.0f - border, (cpFloat)(      h & 0xFFFF)/(cpFloat)0xFFFF),
-		cpflerp(border, 1.0f - border, (cpFloat)((h>>16) & 0xFFFF)/(cpFloat)0xFFFF)
+		cpflerp(border, 1.0f - border, cast(cpFloat)(      h & 0xFFFF)/cast(cpFloat)0xFFFF),
+		cpflerp(border, 1.0f - border, cast(cpFloat)((h>>16) & 0xFFFF)/cast(cpFloat)0xFFFF)
 	);
 }
 
 static cpVect
-WorleyPoint(int i, int j, struct WorleyContex *context)
+WorleyPoint(int i, int j, WorleyContex *context)
 {
-	cpFloat size = context->cellSize;
-	int width = context->width;
-	int height = context->height;
-	cpBB bb = context->bb;
+	cpFloat size = context.cellSize;
+	int width = context.width;
+	int height = context.height;
+	cpBB bb = context.bb;
 	
 //	cpVect fv = cpv(0.5, 0.5);
-	cpVect fv = HashVect(i, j, context->seed);
+	cpVect fv = HashVect(i, j, context.seed);
 	
 	return cpv(
 		cpflerp(bb.l, bb.r, 0.5f) + size*(i + fv.x -  width*0.5f),
@@ -68,11 +68,11 @@ WorleyPoint(int i, int j, struct WorleyContex *context)
 }
 
 static int
-ClipCell(cpShape *shape, cpVect center, int i, int j, struct WorleyContex *context, cpVect *verts, cpVect *clipped, int count)
+ClipCell(cpShape *shape, cpVect center, int i, int j, WorleyContex *context, cpVect *verts, cpVect *clipped, int count)
 {
 	cpVect other = WorleyPoint(i, j, context);
 //	printf("  other %dx%d: (% 5.2f, % 5.2f) ", i, j, other.x, other.y);
-	if(cpShapePointQuery(shape, other, NULL) > 0.0f){
+	if(cpShapePointQuery(shape, other, null) > 0.0f){
 //		printf("excluded\n");
 		memcpy(clipped, verts, count*sizeof(cpVect));
 		return count;
@@ -108,27 +108,27 @@ ClipCell(cpShape *shape, cpVect center, int i, int j, struct WorleyContex *conte
 }
 
 static void
-ShatterCell(cpSpace *space, cpShape *shape, cpVect cell, int cell_i, int cell_j, struct WorleyContex *context)
+ShatterCell(cpSpace *space, cpShape *shape, cpVect cell, int cell_i, int cell_j, WorleyContex *context)
 {
 //	printf("cell %dx%d: (% 5.2f, % 5.2f)\n", cell_i, cell_j, cell.x, cell.y);
 	
-	cpBody *body = cpShapeGetBody(shape);
+	cpBody *body_ = cpShapeGetBody(shape);
 	
-	cpVect *ping = (cpVect *)alloca(MAX_VERTEXES_PER_VORONOI*sizeof(cpVect));
-	cpVect *pong = (cpVect *)alloca(MAX_VERTEXES_PER_VORONOI*sizeof(cpVect));
+	cpVect *ping = cast(cpVect *)alloca(MAX_VERTEXES_PER_VORONOI*sizeof(cpVect));
+	cpVect *pong = cast(cpVect *)alloca(MAX_VERTEXES_PER_VORONOI*sizeof(cpVect));
 	
 	int count = cpPolyShapeGetCount(shape);
 	count = (count > MAX_VERTEXES_PER_VORONOI ? MAX_VERTEXES_PER_VORONOI : count);
 	
 	for(int i=0; i<count; i++){
-		ping[i] = cpBodyLocalToWorld(body, cpPolyShapeGetVert(shape, i));
+		ping[i] = cpBodyLocalToWorld(body_, cpPolyShapeGetVert(shape, i));
 	}
 	
-	for(int i=0; i<context->width; i++){
-		for(int j=0; j<context->height; j++){
+	for(int i=0; i<context.width; i++){
+		for(int j=0; j<context.height; j++){
 			if(
 				!(i == cell_i && j == cell_j) &&
-				cpShapePointQuery(shape, cell, NULL) < 0.0f
+				cpShapePointQuery(shape, cell, null) < 0.0f
 			){
 				count = ClipCell(shape, cell, i, j, context, ping, pong, count);
 				memcpy(ping, pong, count*sizeof(cpVect));
@@ -142,8 +142,8 @@ ShatterCell(cpSpace *space, cpShape *shape, cpVect cell, int cell_i, int cell_j,
 	
 	cpBody *new_body = cpSpaceAddBody(space, cpBodyNew(mass, moment));
 	cpBodySetPosition(new_body, centroid);
-	cpBodySetVelocity(new_body, cpBodyGetVelocityAtWorldPoint(body, centroid));
-	cpBodySetAngularVelocity(new_body, cpBodyGetAngularVelocity(body));
+	cpBodySetVelocity(new_body, cpBodyGetVelocityAtWorldPoint(body_, centroid));
+	cpBodySetAngularVelocity(new_body, cpBodyGetAngularVelocity(body_));
 	
 	cpTransform transform = cpTransformTranslate(cpvneg(centroid));
 	cpShape *new_shape = cpSpaceAddShape(space, cpPolyShapeNew(new_body, count, ping, transform, 0.0));
@@ -161,12 +161,12 @@ ShatterShape(cpSpace *space, cpShape *shape, cpFloat cellSize, cpVect focus)
 	int width = (int)((bb.r - bb.l)/cellSize) + 1;
 	int height = (int)((bb.t - bb.b)/cellSize) + 1;
 //	printf("Splitting as %dx%d\n", width, height);
-	struct WorleyContex context = {rand(), cellSize, width, height, bb, focus};
+	WorleyContex context = {rand(), cellSize, width, height, bb, focus};
 	
 	for(int i=0; i<context.width; i++){
 		for(int j=0; j<context.height; j++){
 			cpVect cell = WorleyPoint(i, j, &context);
-			if(cpShapePointQuery(shape, cell, NULL) < 0.0f){
+			if(cpShapePointQuery(shape, cell, null) < 0.0f){
 				ShatterCell(space, shape, cell, i, j, &context);
 			}
 		}
@@ -187,7 +187,7 @@ update(cpSpace *space, double dt)
 			cpBB bb = cpShapeGetBB(info.shape);
 			cpFloat cell_size = cpfmax(bb.r - bb.l, bb.t - bb.b)/5.0f;
 			if(cell_size > 5.0f){
-				ShatterShape(space, (cpShape *)info.shape, cell_size, ChipmunkDemoMouse);
+				ShatterShape(space, cast(cpShape *)info.shape, cell_size, ChipmunkDemoMouse);
 			} else {
 //				printf("Too small to splinter %f\n", cell_size);
 			}
@@ -206,7 +206,7 @@ init(void)
 	cpSpaceSetSleepTimeThreshold(space, 0.5f);
 	cpSpaceSetCollisionSlop(space, 0.5f);
 	
-	cpBody *body, *staticBody = cpSpaceGetStaticBody(space);
+	cpBody *body_, staticBody = cpSpaceGetStaticBody(space);
 	cpShape *shape;
 	
 	// Create segments around the edge of the screen.
@@ -220,9 +220,9 @@ init(void)
 	cpFloat mass = width*height*DENSITY;
 	cpFloat moment = cpMomentForBox(mass, width, height);
 	
-	body = cpSpaceAddBody(space, cpBodyNew(mass, moment));
+	body_ = cpSpaceAddBody(space, cpBodyNew(mass, moment));
 	
-	shape = cpSpaceAddShape(space, cpBoxShapeNew(body, width, height, 0.0));
+	shape = cpSpaceAddShape(space, cpBoxShapeNew(body_, width, height, 0.0));
 	cpShapeSetFriction(shape, 0.6f);
 		
 	return space;

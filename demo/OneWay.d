@@ -19,16 +19,16 @@
  * SOFTWARE.
  */
  
-#include "chipmunk/chipmunk.h"
-#include "ChipmunkDemo.h"
+import chipmunk.chipmunk;
+import ChipmunkDemo;
 
 enum CollisionTypes {
 	COLLISION_TYPE_ONE_WAY = 1,
 };
 
-typedef struct OneWayPlatform {
+struct OneWayPlatform {
 	cpVect n; // direction objects may pass through
-} OneWayPlatform;
+}
 
 static OneWayPlatform platformInstance;
 
@@ -36,9 +36,9 @@ static cpBool
 PreSolve(cpArbiter *arb, cpSpace *space, void *ignore)
 {
 	CP_ARBITER_GET_SHAPES(arb, a, b);
-	OneWayPlatform *platform = (OneWayPlatform *)cpShapeGetUserData(a);
+	OneWayPlatform *platform = cast(OneWayPlatform *)cpShapeGetUserData(a);
 		
-	if(cpvdot(cpArbiterGetNormal(arb), platform->n) < 0){
+	if(cpvdot(cpArbiterGetNormal(arb), platform.n) < 0){
 		return cpArbiterIgnore(arb);
 	}
 	
@@ -60,7 +60,7 @@ init(void)
 	cpSpaceSetIterations(space, 10);
 	cpSpaceSetGravity(space, cpv(0, -100));
 
-	cpBody *body, *staticBody = cpSpaceGetStaticBody(space);
+	cpBody *body_, staticBody = cpSpaceGetStaticBody(space);
 	cpShape *shape;
 
 	// Create segments around the edge of the screen.
@@ -93,17 +93,17 @@ init(void)
 	
 	// Add a ball to test it out
 	cpFloat radius = 15.0f;
-	body = cpSpaceAddBody(space, cpBodyNew(10.0f, cpMomentForCircle(10.0f, 0.0f, radius, cpvzero)));
-	cpBodySetPosition(body, cpv(0, -200));
-	cpBodySetVelocity(body, cpv(0, 170));
+	body_ = cpSpaceAddBody(space, cpBodyNew(10.0f, cpMomentForCircle(10.0f, 0.0f, radius, cpvzero)));
+	cpBodySetPosition(body_, cpv(0, -200));
+	cpBodySetVelocity(body_, cpv(0, 170));
 
-	shape = cpSpaceAddShape(space, cpCircleShapeNew(body, radius, cpvzero));
+	shape = cpSpaceAddShape(space, cpCircleShapeNew(body_, radius, cpvzero));
 	cpShapeSetElasticity(shape, 0.0f);
 	cpShapeSetFriction(shape, 0.9f);
 	cpShapeSetCollisionType(shape, 2);
 	
 	cpCollisionHandler *handler = cpSpaceAddWildcardHandler(space, COLLISION_TYPE_ONE_WAY);
-	handler->preSolveFunc = PreSolve;
+	handler.preSolveFunc = PreSolve;
 	
 	return space;
 }

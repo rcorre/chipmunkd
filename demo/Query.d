@@ -19,8 +19,8 @@
  * SOFTWARE.
  */
  
-#include "chipmunk/chipmunk.h"
-#include "ChipmunkDemo.h"
+import chipmunk.chipmunk;
+import ChipmunkDemo;
 
 static cpVect QUERY_START = {0,0};
 
@@ -88,10 +88,10 @@ init(void)
 		cpFloat length = 100.0f;
 		cpVect a = cpv(-length/2.0f, 0.0f), b = cpv(length/2.0f, 0.0f);
 		
-		cpBody *body = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForSegment(mass, a, b, 0.0f)));
-		cpBodySetPosition(body, cpv(0.0f, 100.0f));
+		cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForSegment(mass, a, b, 0.0f)));
+		cpBodySetPosition(body_, cpv(0.0f, 100.0f));
 		
-		cpSpaceAddShape(space, cpSegmentShapeNew(body, a, b, 20.0f));
+		cpSpaceAddShape(space, cpSegmentShapeNew(body_, a, b, 20.0f));
 	}
 	
 	{ // add a static segment
@@ -104,24 +104,24 @@ init(void)
 		
 		cpVect verts[NUM_VERTS];
 		for(int i=0; i<NUM_VERTS; i++){
-			cpFloat angle = -2.0f*CP_PI*i/((cpFloat) NUM_VERTS);
+			cpFloat angle = -2.0f*CP_PI*i/(cast(cpFloat) NUM_VERTS);
 			verts[i] = cpv(30*cos(angle), 30*sin(angle));
 		}
 		
-		cpBody *body = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForPoly(mass, NUM_VERTS, verts, cpvzero, 0.0f)));
-		cpBodySetPosition(body, cpv(50.0f, 30.0f));
+		cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForPoly(mass, NUM_VERTS, verts, cpvzero, 0.0f)));
+		cpBodySetPosition(body_, cpv(50.0f, 30.0f));
 		
-		cpSpaceAddShape(space, cpPolyShapeNew(body, NUM_VERTS, verts, cpTransformIdentity, 10.0f));
+		cpSpaceAddShape(space, cpPolyShapeNew(body_, NUM_VERTS, verts, cpTransformIdentity, 10.0f));
 	}
 	
 	{ // add a circle
 		cpFloat mass = 1.0f;
 		cpFloat r = 20.0f;
 		
-		cpBody *body = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForCircle(mass, 0.0f, r, cpvzero)));
-		cpBodySetPosition(body, cpv(100.0f, 100.0f));
+		cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForCircle(mass, 0.0f, r, cpvzero)));
+		cpBodySetPosition(body_, cpv(100.0f, 100.0f));
 		
-		cpSpaceAddShape(space, cpCircleShapeNew(body, r, cpvzero));
+		cpSpaceAddShape(space, cpCircleShapeNew(body_, r, cpvzero));
 	}
 	
 	return space;

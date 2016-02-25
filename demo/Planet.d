@@ -19,8 +19,8 @@
  * SOFTWARE.
  */
  
-#include "chipmunk/chipmunk.h"
-#include "ChipmunkDemo.h"
+import chipmunk.chipmunk;
+import ChipmunkDemo;
 
 static cpBody *planetBody;
 
@@ -33,16 +33,16 @@ update(cpSpace *space, double dt)
 }
 
 static void
-planetGravityVelocityFunc(cpBody *body, cpVect gravity, cpFloat damping, cpFloat dt)
+planetGravityVelocityFunc(cpBody *body_, cpVect gravity, cpFloat damping, cpFloat dt)
 {
 	// Gravitational acceleration is proportional to the inverse square of
 	// distance, and directed toward the origin. The central planet is assumed
 	// to be massive enough that it affects the satellites but not vice versa.
-	cpVect p = cpBodyGetPosition(body);
+	cpVect p = cpBodyGetPosition(body_);
 	cpFloat sqdist = cpvlengthsq(p);
 	cpVect g = cpvmult(p, -gravityStrength / (sqdist * cpfsqrt(sqdist)));
 	
-	cpBodyUpdateVelocity(body, g, damping, dt);
+	cpBodyUpdateVelocity(body_, g, damping, dt);
 }
 
 static cpVect
@@ -72,22 +72,22 @@ add_box(cpSpace *space)
 	cpFloat radius = cpvlength(cpv(size, size));
 	cpVect pos = rand_pos(radius);
 	
-	cpBody *body = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForPoly(mass, 4, verts, cpvzero, 0.0f)));
-	cpBodySetVelocityUpdateFunc(body, planetGravityVelocityFunc);
-	cpBodySetPosition(body, pos);
+	cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForPoly(mass, 4, verts, cpvzero, 0.0f)));
+	cpBodySetVelocityUpdateFunc(body_, planetGravityVelocityFunc);
+	cpBodySetPosition(body_, pos);
 
 	// Set the box's velocity to put it into a circular orbit from its
 	// starting position.
 	cpFloat r = cpvlength(pos);
 	cpFloat v = cpfsqrt(gravityStrength / r) / r;
-	cpBodySetVelocity(body, cpvmult(cpvperp(pos), v));
+	cpBodySetVelocity(body_, cpvmult(cpvperp(pos), v));
 
 	// Set the box's angular velocity to match its orbital period and
 	// align its initial angle with its position.
-	cpBodySetAngularVelocity(body, v);
-	cpBodySetAngle(body, cpfatan2(pos.y, pos.x));
+	cpBodySetAngularVelocity(body_, v);
+	cpBodySetAngle(body_, cpfatan2(pos.y, pos.x));
 
-	cpShape *shape = cpSpaceAddShape(space, cpPolyShapeNew(body, 4, verts, cpTransformIdentity, 0.0));
+	cpShape *shape = cpSpaceAddShape(space, cpPolyShapeNew(body_, 4, verts, cpTransformIdentity, 0.0));
 	cpShapeSetElasticity(shape, 0.0f);
 	cpShapeSetFriction(shape, 0.7f);
 }
@@ -95,7 +95,7 @@ add_box(cpSpace *space)
 static cpSpace *
 init(void)
 {
-	// Create a rouge body to control the planet manually.
+	// Create a rouge body_ to control the planet manually.
 	cpSpace *space = cpSpaceNew();
 	cpSpaceSetIterations(space, 20);
 	

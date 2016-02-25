@@ -19,16 +19,16 @@
  * SOFTWARE.
  */
  
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
+import core.stdc.stdlib;
+import core.stdc.stdio;
+import core.stdc.math;
+import core.stdc.string;
 
-#include "chipmunk_private.h"
-#include "chipmunk_unsafe.h"
-#include "ChipmunkDemo.h"
+import chipmunk_private;
+import chipmunk_unsafe;
+import ChipmunkDemo;
 
-static cpShape *shape1, *shape2;
+static cpShape *shape1, shape2;
 
 static void
 update(cpSpace *space, cpFloat dt)
@@ -40,7 +40,7 @@ static void
 draw(cpSpace *space)
 {
 	ChipmunkDemoDefaultDrawImpl(space);
-	struct cpContact arr[CP_MAX_CONTACTS_PER_ARBITER];
+	cpContact arr[CP_MAX_CONTACTS_PER_ARBITER];
 //	cpCollideShapes(shape1, shape2, (cpCollisionID[]){0}, arr);
 	cpCollisionInfo info = cpCollideShapes(shape2, shape1, 0x00000000, arr);
 }
@@ -50,27 +50,27 @@ init(void)
 {
 	cpSpace *space = cpSpaceNew();
 	cpSpaceSetIterations(space, 5);
-	space->damping = 0.1;
+	space.damping = 0.1;
 	
 	cpFloat mass = 1.0f;
 	
 	{
 		cpFloat size = 100.0;
 		
-		cpBody *body = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForBox(mass, size, size)));
-		cpBodySetPosition(body, cpv(100.0, 50.0f));
+		cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForBox(mass, size, size)));
+		cpBodySetPosition(body_, cpv(100.0, 50.0f));
 		
-		shape1 = cpSpaceAddShape(space, cpBoxShapeNew(body, size, size, 0.0));
-		shape1->group = 1;
+		shape1 = cpSpaceAddShape(space, cpBoxShapeNew(body_, size, size, 0.0));
+		shape1.group = 1;
 	}{
 		cpFloat size = 100.0;
 		
-		cpBody *body = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForBox(mass, size, size)));
-		cpBodySetPosition(body, cpv(120.0, -40.0f));
-		cpBodySetAngle(body, 1e-2);
+		cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForBox(mass, size, size)));
+		cpBodySetPosition(body_, cpv(120.0, -40.0f));
+		cpBodySetAngle(body_, 1e-2);
 		
-		shape2 = cpSpaceAddShape(space, cpBoxShapeNew(body, size, size, 0.0));
-		shape2->group = 1;
+		shape2 = cpSpaceAddShape(space, cpBoxShapeNew(body_, size, size, 0.0));
+		shape2.group = 1;
 	}
 	
 //	{
@@ -79,15 +79,15 @@ init(void)
 //		
 //		cpVect verts[NUM_VERTS];
 //		for(int i=0; i<NUM_VERTS; i++){
-//			cpFloat angle = -2*M_PI*i/((cpFloat) NUM_VERTS);
+//			cpFloat angle = -2*M_PI*i/(cast(cpFloat) NUM_VERTS);
 //			verts[i] = cpv(size/2.0*cos(angle), size/2.0*sin(angle));
 //		}
 //		
-//		cpBody *body = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForPoly(mass, NUM_VERTS, verts, cpvzero)));
-//		cpBodySetPosition(body, cpv(100.0, 50.0f));
+//		cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForPoly(mass, NUM_VERTS, verts, cpvzero)));
+//		cpBodySetPosition(body_, cpv(100.0, 50.0f));
 //		
-//		shape1 = cpSpaceAddShape(space, cpPolyShapeNew(body, NUM_VERTS, verts, cpvzero));
-//		shape1->group = 1;
+//		shape1 = cpSpaceAddShape(space, cpPolyShapeNew(body_, NUM_VERTS, verts, cpvzero));
+//		shape1.group = 1;
 //	}
 //	{
 //		cpFloat size = 100.0;
@@ -95,15 +95,15 @@ init(void)
 //		
 //		cpVect verts[NUM_VERTS];
 //		for(int i=0; i<NUM_VERTS; i++){
-//			cpFloat angle = -2*M_PI*i/((cpFloat) NUM_VERTS);
+//			cpFloat angle = -2*M_PI*i/(cast(cpFloat) NUM_VERTS);
 //			verts[i] = cpv(size/2.0*cos(angle), size/2.0*sin(angle));
 //		}
 //		
-//		cpBody *body = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForPoly(mass, NUM_VERTS, verts, cpvzero)));
-//		cpBodySetPosition(body, cpv(100.0, -50.0f));
+//		cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForPoly(mass, NUM_VERTS, verts, cpvzero)));
+//		cpBodySetPosition(body_, cpv(100.0, -50.0f));
 //		
-//		shape2 = cpSpaceAddShape(space, cpPolyShapeNew(body, NUM_VERTS, verts, cpvzero));
-//		shape2->group = 1;
+//		shape2 = cpSpaceAddShape(space, cpPolyShapeNew(body_, NUM_VERTS, verts, cpvzero));
+//		shape2.group = 1;
 //	}
 //	
 //	{
@@ -112,20 +112,20 @@ init(void)
 //		
 //		cpVect a = cpv( size/2.0, 0.0);
 //		cpVect b = cpv(-size/2.0, 0.0);
-//		cpBody *body = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForSegment(mass, a, b)));
-//		cpBodySetPosition(body, cpv(0, 25));
+//		cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForSegment(mass, a, b)));
+//		cpBodySetPosition(body_, cpv(0, 25));
 //		
-//		shape1 = cpSpaceAddShape(space, cpSegmentShapeNew(body, a, b, radius));
-//		shape1->group = 1;
+//		shape1 = cpSpaceAddShape(space, cpSegmentShapeNew(body_, a, b, radius));
+//		shape1.group = 1;
 //	}
 //	{
 //		cpFloat radius = 50.0;
 //		
-//		cpBody *body = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForCircle(mass, 0.0f, radius, cpvzero)));
-//		cpBodySetPosition(body, cpv(0, -25));
+//		cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForCircle(mass, 0.0f, radius, cpvzero)));
+//		cpBodySetPosition(body_, cpv(0, -25));
 //		
-//		shape2 = cpSpaceAddShape(space, cpCircleShapeNew(body, radius, cpvzero));
-//		shape2->group = 1;
+//		shape2 = cpSpaceAddShape(space, cpCircleShapeNew(body_, radius, cpvzero));
+//		shape2.group = 1;
 //	}
 
 	return space;

@@ -19,8 +19,8 @@
  * SOFTWARE.
  */
  
-#include "chipmunk/chipmunk.h"
-#include "ChipmunkDemo.h"
+import chipmunk.chipmunk;
+import ChipmunkDemo;
 
 static cpBody *KinematicBoxBody;
 
@@ -33,10 +33,10 @@ update(cpSpace *space, double dt)
 static void
 AddBox(cpSpace *space, cpVect pos, cpFloat mass, cpFloat width, cpFloat height)
 {
-	cpBody *body = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForBox(mass, width, height)));
-	cpBodySetPosition(body, pos);
+	cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForBox(mass, width, height)));
+	cpBodySetPosition(body_, pos);
 	
-	cpShape *shape = cpSpaceAddShape(space, cpBoxShapeNew(body, width, height, 0.0));
+	cpShape *shape = cpSpaceAddShape(space, cpBoxShapeNew(body_, width, height, 0.0));
 	cpShapeSetElasticity(shape, 0.0f);
 	cpShapeSetFriction(shape, 0.7f);
 }
@@ -44,10 +44,10 @@ AddBox(cpSpace *space, cpVect pos, cpFloat mass, cpFloat width, cpFloat height)
 static void
 AddSegment(cpSpace *space, cpVect pos, cpFloat mass, cpFloat width, cpFloat height)
 {
-	cpBody *body = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForBox(mass, width, height)));
-	cpBodySetPosition(body, pos);
+	cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForBox(mass, width, height)));
+	cpBodySetPosition(body_, pos);
 	
-	cpShape *shape = cpSpaceAddShape(space, cpSegmentShapeNew(body, cpv(0.0, (height - width)/2.0), cpv(0.0, (width - height)/2.0), width/2.0));
+	cpShape *shape = cpSpaceAddShape(space, cpSegmentShapeNew(body_, cpv(0.0, (height - width)/2.0), cpv(0.0, (width - height)/2.0), width/2.0));
 	cpShapeSetElasticity(shape, 0.0f);
 	cpShapeSetFriction(shape, 0.7f);
 }
@@ -55,10 +55,10 @@ AddSegment(cpSpace *space, cpVect pos, cpFloat mass, cpFloat width, cpFloat heig
 static void
 AddCircle(cpSpace *space, cpVect pos, cpFloat mass, cpFloat radius)
 {
-	cpBody *body = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForCircle(mass, 0.0, radius, cpvzero)));
-	cpBodySetPosition(body, pos);
+	cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForCircle(mass, 0.0, radius, cpvzero)));
+	cpBodySetPosition(body_, pos);
 	
-	cpShape *shape = cpSpaceAddShape(space, cpCircleShapeNew(body, radius, cpvzero));
+	cpShape *shape = cpSpaceAddShape(space, cpCircleShapeNew(body_, radius, cpvzero));
 	cpShapeSetElasticity(shape, 0.0f);
 	cpShapeSetFriction(shape, 0.7f);
 }
@@ -71,7 +71,7 @@ init(void)
 	
 	cpShape *shape;
 	
-	// We create an infinite mass rogue body to attach the line segments too
+	// We create an infinite mass rogue body_ to attach the line segments too
 	// This way we can control the rotation however we want.
 	KinematicBoxBody = cpSpaceAddBody(space, cpBodyNewKinematic());
 	cpBodySetAngularVelocity(KinematicBoxBody, 0.4f);

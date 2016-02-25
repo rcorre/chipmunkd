@@ -19,24 +19,24 @@
  * SOFTWARE.
  */
  
-#include "chipmunk/chipmunk.h"
-#include "ChipmunkDemo.h"
+import chipmunk.chipmunk;
+import ChipmunkDemo;
 
-static cpBody *dollyBody = NULL;
+static cpBody *dollyBody = null;
 // Constraint used as a servo motor to move the dolly back and forth.
-static cpConstraint *dollyServo = NULL;
+static cpConstraint *dollyServo = null;
 
 // Constraint used as a winch motor to lift the load.
-static cpConstraint *winchServo = NULL;
+static cpConstraint *winchServo = null;
 
 // Temporary joint used to hold the hook to the load.
-static cpConstraint *hookJoint = NULL;
+static cpConstraint *hookJoint = null;
 
 
 static void
 update(cpSpace *space, double dt)
 {
-	// Set the first anchor point (the one attached to the static body) of the dolly servo to the mouse's x position.
+	// Set the first anchor point (the one attached to the static body_) of the dolly servo to the mouse's x position.
 	cpPivotJointSetAnchorA(dollyServo, cpv(ChipmunkDemoMouse.x, 100));
 	
 	// Set the max length of the winch servo to match the mouse's height.
@@ -45,7 +45,7 @@ update(cpSpace *space, double dt)
 	if(hookJoint && ChipmunkDemoRightClick){
 		cpSpaceRemoveConstraint(space, hookJoint);
 		cpConstraintFree(hookJoint);
-		hookJoint = NULL;
+		hookJoint = null;
 	}
 	
 	cpSpaceStep(space, dt);
@@ -66,7 +66,7 @@ AttachHook(cpSpace *space, cpBody *hook, cpBody *crate)
 static cpBool
 HookCrate(cpArbiter *arb, cpSpace *space, void *data)
 {
-	if(hookJoint == NULL){
+	if(hookJoint == null){
 		// Get pointers to the two bodies in the collision pair and define local variables for them.
 		// Their order matches the order of the collision types passed
 		// to the collision handler this function was defined for
@@ -75,7 +75,7 @@ HookCrate(cpArbiter *arb, cpSpace *space, void *data)
 		// additions and removals can't be done in a normal callback.
 		// Schedule a post step callback to do it.
 		// Use the hook as the key and pass along the arbiter.
-		cpSpaceAddPostStepCallback(space, (cpPostStepFunc)AttachHook, hook, crate);
+		cpSpaceAddPostStepCallback(space, cast(cpPostStepFunc)AttachHook, hook, crate);
 	}
 	
 	return cpTrue; // return value is ignored for sensor callbacks anyway
@@ -100,7 +100,7 @@ init(void)
 	cpShapeSetFriction(shape, 1.0f);
 	cpShapeSetFilter(shape, NOT_GRABBABLE_FILTER);
 	
-	// Add a body for the dolly.
+	// Add a body_ for the dolly.
 	dollyBody = cpSpaceAddBody(space, cpBodyNew(10, INFINITY));
 	cpBodySetPosition(dollyBody, cpv(0, 100));
 	
@@ -149,7 +149,7 @@ init(void)
 	cpShapeSetCollisionType(shape, CRATE);
 	
 	cpCollisionHandler *handler = cpSpaceAddCollisionHandler(space, HOOK_SENSOR, CRATE);
-	handler->beginFunc = (cpCollisionBeginFunc)HookCrate;
+	handler.beginFunc = cast(cpCollisionBeginFunc)HookCrate;
 	
 	
 	return space;

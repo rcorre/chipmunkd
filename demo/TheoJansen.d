@@ -25,8 +25,8 @@
  * Read more here: http://en.wikipedia.org/wiki/Theo_Jansen
  */
  
-#include "chipmunk/chipmunk.h"
-#include "ChipmunkDemo.h"
+import chipmunk.chipmunk;
+import ChipmunkDemo;
 
 static cpConstraint *motor;
 
@@ -141,8 +141,8 @@ init(void)
 	
 	int num_legs = 2;
 	for(int i=0; i<num_legs; i++){
-		make_leg(space, side,  offset, chassis, crank, cpvmult(cpvforangle((cpFloat)(2*i+0)/(cpFloat)num_legs*CP_PI), crank_radius));
-		make_leg(space, side, -offset, chassis, crank, cpvmult(cpvforangle((cpFloat)(2*i+1)/(cpFloat)num_legs*CP_PI), crank_radius));
+		make_leg(space, side,  offset, chassis, crank, cpvmult(cpvforangle(cast(cpFloat)(2*i+0)/cast(cpFloat)num_legs*CP_PI), crank_radius));
+		make_leg(space, side, -offset, chassis, crank, cpvmult(cpvforangle(cast(cpFloat)(2*i+1)/cast(cpFloat)num_legs*CP_PI), crank_radius));
 	}
 	
 	motor = cpSpaceAddConstraint(space, cpSimpleMotorNew(chassis, crank, 6.0f));

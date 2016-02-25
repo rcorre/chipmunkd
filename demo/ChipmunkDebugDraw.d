@@ -19,15 +19,15 @@
  * SOFTWARE.
  */
 
-#include <limits.h>
-#include <string.h>
+import core.stdc.limits;
+import core.stdc.string;
 
-#include "GL/glew.h"
-#include "GL/glfw.h"
+import GL.glew;
+import GL.glfw;
 
-#include "chipmunk/chipmunk_private.h"
-#include "ChipmunkDebugDraw.h"
-#include "ChipmunkDemoShaderSupport.h"
+import chipmunk.chipmunk_private;
+import ChipmunkDebugDraw;
+import ChipmunkDemoShaderSupport;
 
 float ChipmunkDebugDrawPointLineScale = 1.0f;
 float ChipmunkDebugDrawOutlineWidth = 1.0f;
@@ -35,17 +35,16 @@ float ChipmunkDebugDrawOutlineWidth = 1.0f;
 static GLuint program;
 
 struct v2f {GLfloat x, y;};
-static struct v2f v2f0 = {0.0f, 0.0f};
+static v2f v2f0 = {0.0f, 0.0f};
 
-static inline struct v2f
-v2f(cpVect v)
+v2f v2f(cpVect v)
 {
-	struct v2f v2 = {(GLfloat)v.x, (GLfloat)v.y};
+	v2f v2 = {cast(GLfloat)v.x, cast(GLfloat)v.y};
 	return v2;
 }
 
-typedef struct Vertex {struct v2f vertex, aa_coord; cpSpaceDebugColor fill_color, outline_color;} Vertex;
-typedef struct Triangle {Vertex a, b, c;} Triangle;
+struct Vertex {v2f vertex, aa_coord; cpSpaceDebugColor fill_color, outline_color;}
+struct Triangle {Vertex a, b, c;}
 
 static GLuint vao = 0;
 static GLuint vbo = 0;
@@ -141,12 +140,12 @@ ChipmunkDebugDrawInit(void)
 	CHECK_GL_ERRORS();
 }
 
-#undef MAX // Defined on some systems
-#define MAX(__a__, __b__) (__a__ > __b__ ? __a__ : __b__)
+import std.algorithm;
+alias MAX = std.algorithm.max;
 
 static GLsizei triangle_capacity = 0;
 static GLsizei triangle_count = 0;
-static Triangle *triangle_buffer = NULL;
+static Triangle *triangle_buffer = null;
 
 static Triangle *PushTriangles(GLsizei count)
 {
@@ -166,10 +165,10 @@ void ChipmunkDebugDrawCircle(cpVect pos, cpFloat angle, cpFloat radius, cpSpaceD
 	Triangle *triangles = PushTriangles(2);
 	
 	cpFloat r = radius + 1.0f/ChipmunkDebugDrawPointLineScale;
-	Vertex a = {{(GLfloat)(pos.x - r), (GLfloat)(pos.y - r)}, {-1.0f, -1.0f}, fillColor, outlineColor};
-	Vertex b = {{(GLfloat)(pos.x - r), (GLfloat)(pos.y + r)}, {-1.0f,  1.0f}, fillColor, outlineColor};
-	Vertex c = {{(GLfloat)(pos.x + r), (GLfloat)(pos.y + r)}, { 1.0f,  1.0f}, fillColor, outlineColor};
-	Vertex d = {{(GLfloat)(pos.x + r), (GLfloat)(pos.y - r)}, { 1.0f, -1.0f}, fillColor, outlineColor};
+	Vertex a = {{cast(GLfloat)(pos.x - r), cast(GLfloat)(pos.y - r)}, {-1.0f, -1.0f}, fillColor, outlineColor};
+	Vertex b = {{cast(GLfloat)(pos.x - r), cast(GLfloat)(pos.y + r)}, {-1.0f,  1.0f}, fillColor, outlineColor};
+	Vertex c = {{cast(GLfloat)(pos.x + r), cast(GLfloat)(pos.y + r)}, { 1.0f,  1.0f}, fillColor, outlineColor};
+	Vertex d = {{cast(GLfloat)(pos.x + r), cast(GLfloat)(pos.y - r)}, { 1.0f, -1.0f}, fillColor, outlineColor};
 	
 	Triangle t0 = {a, b, c}; triangles[0] = t0;
 	Triangle t1 = {a, c, d}; triangles[1] = t1;
@@ -198,14 +197,14 @@ void ChipmunkDebugDrawFatSegment(cpVect a, cpVect b, cpFloat radius, cpSpaceDebu
 	
 	cpVect nw = (cpvmult(n, r));
 	cpVect tw = (cpvmult(t, r));
-	struct v2f v0 = v2f(cpvsub(b, cpvadd(nw, tw))); // { 1.0, -1.0}
-	struct v2f v1 = v2f(cpvadd(b, cpvsub(nw, tw))); // { 1.0,  1.0}
-	struct v2f v2 = v2f(cpvsub(b, nw)); // { 0.0, -1.0}
-	struct v2f v3 = v2f(cpvadd(b, nw)); // { 0.0,  1.0}
-	struct v2f v4 = v2f(cpvsub(a, nw)); // { 0.0, -1.0}
-	struct v2f v5 = v2f(cpvadd(a, nw)); // { 0.0,  1.0}
-	struct v2f v6 = v2f(cpvsub(a, cpvsub(nw, tw))); // {-1.0, -1.0}
-	struct v2f v7 = v2f(cpvadd(a, cpvadd(nw, tw))); // {-1.0,  1.0}
+	v2f v0 = v2f(cpvsub(b, cpvadd(nw, tw))); // { 1.0, -1.0}
+	v2f v1 = v2f(cpvadd(b, cpvsub(nw, tw))); // { 1.0,  1.0}
+	v2f v2 = v2f(cpvsub(b, nw)); // { 0.0, -1.0}
+	v2f v3 = v2f(cpvadd(b, nw)); // { 0.0,  1.0}
+	v2f v4 = v2f(cpvsub(a, nw)); // { 0.0, -1.0}
+	v2f v5 = v2f(cpvadd(a, nw)); // { 0.0,  1.0}
+	v2f v6 = v2f(cpvsub(a, cpvsub(nw, tw))); // {-1.0, -1.0}
+	v2f v7 = v2f(cpvadd(a, cpvadd(nw, tw))); // {-1.0,  1.0}
 	
 	Triangle t0 = {{v0, { 1.0f, -1.0f}, fillColor, outlineColor}, {v1, { 1.0f,  1.0f}, fillColor, outlineColor}, {v2, { 0.0f, -1.0f}, fillColor, outlineColor}}; triangles[0] = t0;
 	Triangle t1 = {{v3, { 0.0f,  1.0f}, fillColor, outlineColor}, {v1, { 1.0f,  1.0f}, fillColor, outlineColor}, {v2, { 0.0f, -1.0f}, fillColor, outlineColor}}; triangles[1] = t1;
@@ -220,8 +219,8 @@ extern cpVect ChipmunkDemoMouse;
 void ChipmunkDebugDrawPolygon(int count, const cpVect *verts, cpFloat radius, cpSpaceDebugColor outlineColor, cpSpaceDebugColor fillColor)
 {
 	struct ExtrudeVerts {cpVect offset, n;};
-	size_t bytes = sizeof(struct ExtrudeVerts)*count;
-	struct ExtrudeVerts *extrude = (struct ExtrudeVerts *)alloca(bytes);
+	size_t bytes = sizeof(ExtrudeVerts)*count;
+	ExtrudeVerts *extrude = (ExtrudeVerts *)alloca(bytes);
 	memset(extrude, 0, bytes);
 	
 	for(int i=0; i<count; i++){
@@ -233,7 +232,7 @@ void ChipmunkDebugDrawPolygon(int count, const cpVect *verts, cpFloat radius, cp
 		cpVect n2 = cpvnormalize(cpvrperp(cpvsub(v2, v1)));
 		
 		cpVect offset = cpvmult(cpvadd(n1, n2), 1.0/(cpvdot(n1, n2) + 1.0f));
-		struct ExtrudeVerts v = {offset, n2}; extrude[i] = v;
+		ExtrudeVerts v = {offset, n2}; extrude[i] = v;
 	}
 	
 //	Triangle *triangles = PushTriangles(6*count);
@@ -242,9 +241,9 @@ void ChipmunkDebugDrawPolygon(int count, const cpVect *verts, cpFloat radius, cp
 	
 	cpFloat inset = -cpfmax(0.0f, 1.0f/ChipmunkDebugDrawPointLineScale - radius);
 	for(int i=0; i<count-2; i++){
-		struct v2f v0 = v2f(cpvadd(verts[  0], cpvmult(extrude[  0].offset, inset)));
-		struct v2f v1 = v2f(cpvadd(verts[i+1], cpvmult(extrude[i+1].offset, inset)));
-		struct v2f v2 = v2f(cpvadd(verts[i+2], cpvmult(extrude[i+2].offset, inset)));
+		v2f v0 = v2f(cpvadd(verts[  0], cpvmult(extrude[  0].offset, inset)));
+		v2f v1 = v2f(cpvadd(verts[i+1], cpvmult(extrude[i+1].offset, inset)));
+		v2f v2 = v2f(cpvadd(verts[i+2], cpvmult(extrude[i+2].offset, inset)));
 		
 		Triangle t = {{v0, v2f0, fillColor, fillColor}, {v1, v2f0, fillColor, fillColor}, {v2, v2f0, fillColor, fillColor}}; *cursor++ = t;
 	}
@@ -264,16 +263,16 @@ void ChipmunkDebugDrawPolygon(int count, const cpVect *verts, cpFloat radius, cp
 		cpVect innerB = cpvadd(vB, cpvmult(offsetB, inset));
 		
 		// Admittedly my variable naming sucks here...
-		struct v2f inner0 = v2f(innerA);
-		struct v2f inner1 = v2f(innerB);
-		struct v2f outer0 = v2f(cpvadd(innerA, cpvmult(nB, outset)));
-		struct v2f outer1 = v2f(cpvadd(innerB, cpvmult(nB, outset)));
-		struct v2f outer2 = v2f(cpvadd(innerA, cpvmult(offsetA, outset)));
-		struct v2f outer3 = v2f(cpvadd(innerA, cpvmult(nA, outset)));
+		v2f inner0 = v2f(innerA);
+		v2f inner1 = v2f(innerB);
+		v2f outer0 = v2f(cpvadd(innerA, cpvmult(nB, outset)));
+		v2f outer1 = v2f(cpvadd(innerB, cpvmult(nB, outset)));
+		v2f outer2 = v2f(cpvadd(innerA, cpvmult(offsetA, outset)));
+		v2f outer3 = v2f(cpvadd(innerA, cpvmult(nA, outset)));
 		
-		struct v2f n0 = v2f(nA);
-		struct v2f n1 = v2f(nB);
-		struct v2f offset0 = v2f(offsetA);
+		v2f n0 = v2f(nA);
+		v2f n1 = v2f(nB);
+		v2f offset0 = v2f(offsetA);
 		
 		Triangle t0 = {{inner0, v2f0, fillColor, outlineColor}, {inner1,    v2f0, fillColor, outlineColor}, {outer1,      n1, fillColor, outlineColor}}; *cursor++ = t0;
 		Triangle t1 = {{inner0, v2f0, fillColor, outlineColor}, {outer0,      n1, fillColor, outlineColor}, {outer1,      n1, fillColor, outlineColor}}; *cursor++ = t1;
@@ -286,11 +285,11 @@ void ChipmunkDebugDrawDot(cpFloat size, cpVect pos, cpSpaceDebugColor fillColor)
 {
 	Triangle *triangles = PushTriangles(2);
 	
-	float r = (float)(size*0.5f/ChipmunkDebugDrawPointLineScale);
-	Vertex a = {{(float)pos.x - r, (float)pos.y - r}, {-1.0f, -1.0f}, fillColor, fillColor};
-	Vertex b = {{(float)pos.x - r, (float)pos.y + r}, {-1.0f,  1.0f}, fillColor, fillColor};
-	Vertex c = {{(float)pos.x + r, (float)pos.y + r}, { 1.0f,  1.0f}, fillColor, fillColor};
-	Vertex d = {{(float)pos.x + r, (float)pos.y - r}, { 1.0f, -1.0f}, fillColor, fillColor};
+	float r = cast(float)(size*0.5f/ChipmunkDebugDrawPointLineScale);
+	Vertex a = {{cast(float)pos.x - r, cast(float)pos.y - r}, {-1.0f, -1.0f}, fillColor, fillColor};
+	Vertex b = {{cast(float)pos.x - r, cast(float)pos.y + r}, {-1.0f,  1.0f}, fillColor, fillColor};
+	Vertex c = {{cast(float)pos.x + r, cast(float)pos.y + r}, { 1.0f,  1.0f}, fillColor, fillColor};
+	Vertex d = {{cast(float)pos.x + r, cast(float)pos.y - r}, { 1.0f, -1.0f}, fillColor, fillColor};
 	
 	Triangle t0 = {a, b, c}; triangles[0] = t0;
 	Triangle t1 = {a, c, d}; triangles[1] = t1;

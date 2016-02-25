@@ -19,20 +19,20 @@
  * SOFTWARE.
  */
  
-#include "chipmunk/chipmunk.h"
-#include "ChipmunkDemo.h"
+import chipmunk.chipmunk;
+import ChipmunkDemo;
 
 static cpFloat pentagon_mass = 0.0f;
 static cpFloat pentagon_moment = 0.0f;
 
 // Iterate over all of the bodies and reset the ones that have fallen offscreen.
 static void
-eachBody(cpBody *body, void *unused)
+eachBody(cpBody *body_, void *unused)
 {
-	cpVect pos = cpBodyGetPosition(body);
+	cpVect pos = cpBodyGetPosition(body_);
 	if(pos.y < -260 || cpfabs(pos.x) > 340){
-		cpFloat x = rand()/(cpFloat)RAND_MAX*640 - 320;
-		cpBodySetPosition(body, cpv(x, 260));
+		cpFloat x = rand()/cast(cpFloat)RAND_MAX*640 - 320;
+		cpBodySetPosition(body_, cpv(x, 260));
 	}
 }
 
@@ -40,24 +40,24 @@ static void
 update(cpSpace *space, double dt)
 {
 	if(ChipmunkDemoRightDown){
-		cpShape *nearest = cpSpacePointQueryNearest(space, ChipmunkDemoMouse, 0.0, GRAB_FILTER, NULL);
+		cpShape *nearest = cpSpacePointQueryNearest(space, ChipmunkDemoMouse, 0.0, GRAB_FILTER, null);
 		if(nearest){
-			cpBody *body = cpShapeGetBody(nearest);
-			if(cpBodyGetType(body) == CP_BODY_TYPE_STATIC){
-				cpBodySetType(body, CP_BODY_TYPE_DYNAMIC);
-				cpBodySetMass(body, pentagon_mass);
-				cpBodySetMoment(body, pentagon_moment);
-			} else if(cpBodyGetType(body) == CP_BODY_TYPE_DYNAMIC) {
-				cpBodySetType(body, CP_BODY_TYPE_STATIC);
+			cpBody *body_ = cpShapeGetBody(nearest);
+			if(cpBodyGetType(body_) == CP_BODY_TYPE_STATIC){
+				cpBodySetType(body_, CP_BODY_TYPE_DYNAMIC);
+				cpBodySetMass(body_, pentagon_mass);
+				cpBodySetMoment(body_, pentagon_moment);
+			} else if(cpBodyGetType(body_) == CP_BODY_TYPE_DYNAMIC) {
+				cpBodySetType(body_, CP_BODY_TYPE_STATIC);
 			}
 		}
 	}
 	
-	cpSpaceEachBody(space, &eachBody, NULL);
+	cpSpaceEachBody(space, &eachBody, null);
 	cpSpaceStep(space, dt);
 }
 
-#define NUM_VERTS 5
+enum NUM_VERTS = 5;
 
 static cpSpace *
 init(void)
@@ -68,7 +68,7 @@ init(void)
 	cpSpaceSetIterations(space, 5);
 	cpSpaceSetGravity(space, cpv(0, -100));
 		
-	cpBody *body, *staticBody = cpSpaceGetStaticBody(space);
+	cpBody *body_, staticBody = cpSpaceGetStaticBody(space);
 	cpShape *shape;
 	
 	// Vertexes for a triangle shape.
@@ -93,7 +93,7 @@ init(void)
 	// Create vertexes for a pentagon shape.
 	cpVect verts[NUM_VERTS];
 	for(int i=0; i<NUM_VERTS; i++){
-		cpFloat angle = -2.0f*CP_PI*i/((cpFloat) NUM_VERTS);
+		cpFloat angle = -2.0f*CP_PI*i/(cast(cpFloat) NUM_VERTS);
 		verts[i] = cpv(10*cos(angle), 10*sin(angle));
 	}
 	
@@ -102,11 +102,11 @@ init(void)
 	
 	// Add lots of pentagons.
 	for(int i=0; i<300; i++){
-		body = cpSpaceAddBody(space, cpBodyNew(pentagon_mass, pentagon_moment));
-		cpFloat x = rand()/(cpFloat)RAND_MAX*640 - 320;
-		cpBodySetPosition(body, cpv(x, 350));
+		body_ = cpSpaceAddBody(space, cpBodyNew(pentagon_mass, pentagon_moment));
+		cpFloat x = rand()/cast(cpFloat)RAND_MAX*640 - 320;
+		cpBodySetPosition(body_, cpv(x, 350));
 		
-		shape = cpSpaceAddShape(space, cpPolyShapeNew(body, NUM_VERTS, verts, cpTransformIdentity, 0.0));
+		shape = cpSpaceAddShape(space, cpPolyShapeNew(body_, NUM_VERTS, verts, cpTransformIdentity, 0.0));
 		cpShapeSetElasticity(shape, 0.0f);
 		cpShapeSetFriction(shape, 0.4f);
 	}

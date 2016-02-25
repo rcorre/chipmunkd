@@ -19,15 +19,15 @@
  * SOFTWARE.
  */
  
-#include "chipmunk/chipmunk.h"
-#include "ChipmunkDemo.h"
+import chipmunk.chipmunk;
+import ChipmunkDemo;
 
-static cpBody *tankBody, *tankControlBody;
+static cpBody *tankBody, tankControlBody;
 
 static void
 update(cpSpace *space, double dt)
 {
-	// turn the control body based on the angle relative to the actual body
+	// turn the control body_ based on the angle relative to the actual body_
 	cpVect mouseDelta = cpvsub(ChipmunkDemoMouse, cpBodyGetPosition(tankBody));
 	cpFloat turn = cpvtoangle(cpvunrotate(cpBodyGetRotation(tankBody), mouseDelta));
 	cpBodySetAngle(tankControlBody, cpBodyGetAngle(tankBody) - turn);
@@ -48,14 +48,14 @@ add_box(cpSpace *space, cpFloat size, cpFloat mass)
 {
 	cpFloat radius = cpvlength(cpv(size, size));
 
-	cpBody *body = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForBox(mass, size, size)));
-	cpBodySetPosition(body, cpv(frand()*(640 - 2*radius) - (320 - radius), frand()*(480 - 2*radius) - (240 - radius)));
+	cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForBox(mass, size, size)));
+	cpBodySetPosition(body_, cpv(frand()*(640 - 2*radius) - (320 - radius), frand()*(480 - 2*radius) - (240 - radius)));
 	
-	cpShape *shape = cpSpaceAddShape(space, cpBoxShapeNew(body, size, size, 0.0));
+	cpShape *shape = cpSpaceAddShape(space, cpBoxShapeNew(body_, size, size, 0.0));
 	cpShapeSetElasticity(shape, 0.0f);
 	cpShapeSetFriction(shape, 0.7f);
 	
-	return body;
+	return body_;
 }
 
 static cpSpace *
@@ -92,18 +92,18 @@ init(void)
 	cpShapeSetFilter(shape, NOT_GRABBABLE_FILTER);
 	
 	for(int i=0; i<50; i++){
-		cpBody *body = add_box(space, 20, 1);
+		cpBody *body_ = add_box(space, 20, 1);
 		
-		cpConstraint *pivot = cpSpaceAddConstraint(space, cpPivotJointNew2(staticBody, body, cpvzero, cpvzero));
+		cpConstraint *pivot = cpSpaceAddConstraint(space, cpPivotJointNew2(staticBody, body_, cpvzero, cpvzero));
 		cpConstraintSetMaxBias(pivot, 0); // disable joint correction
 		cpConstraintSetMaxForce(pivot, 1000.0f); // emulate linear friction
 		
-		cpConstraint *gear = cpSpaceAddConstraint(space, cpGearJointNew(staticBody, body, 0.0f, 1.0f));
+		cpConstraint *gear = cpSpaceAddConstraint(space, cpGearJointNew(staticBody, body_, 0.0f, 1.0f));
 		cpConstraintSetMaxBias(gear, 0); // disable joint correction
 		cpConstraintSetMaxForce(gear, 5000.0f); // emulate angular friction
 	}
 	
-	// We joint the tank to the control body and control the tank indirectly by modifying the control body.
+	// We joint the tank to the control body_ and control the tank indirectly by modifying the control body_.
 	tankControlBody = cpSpaceAddBody(space, cpBodyNewKinematic());
 	tankBody = add_box(space, 30, 10);
 	

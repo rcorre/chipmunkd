@@ -19,11 +19,11 @@
  * SOFTWARE.
  */
  
-#include "chipmunk/chipmunk.h"
-#include "ChipmunkDemo.h"
+import chipmunk.chipmunk;
+import ChipmunkDemo;
 
-#define CHAIN_COUNT 8
-#define LINK_COUNT 10
+enum CHAIN_COUNT = 8;
+enum LINK_COUNT = 10;
 
 static void
 BreakablejointPostStepRemove(cpSpace *space, cpConstraint *joint, void *unused)
@@ -43,7 +43,7 @@ BreakableJointPostSolve(cpConstraint *joint, cpSpace *space)
 
 	// If the force is almost as big as the joint's max force, break it.
 	if(force > 0.9*maxForce){
-		cpSpaceAddPostStepCallback(space, (cpPostStepFunc)BreakablejointPostStepRemove, joint, NULL);
+		cpSpaceAddPostStepCallback(space, cast(cpPostStepFunc)BreakablejointPostStepRemove, joint, null);
 	}
 }
 
@@ -61,7 +61,7 @@ init(void)
 	cpSpaceSetGravity(space, cpv(0, -100));
 	cpSpaceSetSleepTimeThreshold(space, 0.5f);
 	
-	cpBody *body, *staticBody = cpSpaceGetStaticBody(space);
+	cpBody *body_, staticBody = cpSpaceGetStaticBody(space);
 	cpShape *shape;
 	
 	// Create segments around the edge of the screen.
@@ -93,40 +93,40 @@ init(void)
 	
 	// Add lots of boxes.
 	for(int i=0; i<CHAIN_COUNT; i++){
-		cpBody *prev = NULL;
+		cpBody *prev = null;
 		
 		for(int j=0; j<LINK_COUNT; j++){
 			cpVect pos = cpv(40*(i - (CHAIN_COUNT - 1)/2.0), 240 - (j + 0.5)*height - (j + 1)*spacing);
 			
-			body = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForBox(mass, width, height)));
-			cpBodySetPosition(body, pos);
+			body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForBox(mass, width, height)));
+			cpBodySetPosition(body_, pos);
 			
-			shape = cpSpaceAddShape(space, cpSegmentShapeNew(body, cpv(0, (height - width)/2.0), cpv(0, (width - height)/2.0), width/2.0));
+			shape = cpSpaceAddShape(space, cpSegmentShapeNew(body_, cpv(0, (height - width)/2.0), cpv(0, (width - height)/2.0), width/2.0));
 			cpShapeSetFriction(shape, 0.8f);
 			
 			cpFloat breakingForce = 80000;
 			
-			cpConstraint *constraint = NULL;
-			if(prev == NULL){
-				constraint = cpSpaceAddConstraint(space, cpSlideJointNew(body, staticBody, cpv(0, height/2), cpv(pos.x, 240), 0, spacing));
+			cpConstraint *constraint = null;
+			if(prev == null){
+				constraint = cpSpaceAddConstraint(space, cpSlideJointNew(body_, staticBody, cpv(0, height/2), cpv(pos.x, 240), 0, spacing));
 			} else {
-				constraint = cpSpaceAddConstraint(space, cpSlideJointNew(body, prev, cpv(0, height/2), cpv(0, -height/2), 0, spacing));
+				constraint = cpSpaceAddConstraint(space, cpSlideJointNew(body_, prev, cpv(0, height/2), cpv(0, -height/2), 0, spacing));
 			}
 			
 			cpConstraintSetMaxForce(constraint, breakingForce);
 			cpConstraintSetPostSolveFunc(constraint, BreakableJointPostSolve);
 			cpConstraintSetCollideBodies(constraint, cpFalse);
 			
-			prev = body;
+			prev = body_;
 		}
 	}
 	
 	cpFloat radius = 15.0f;
-	body = cpSpaceAddBody(space, cpBodyNew(10.0f, cpMomentForCircle(10.0f, 0.0f, radius, cpvzero)));
-	cpBodySetPosition(body, cpv(0, -240 + radius+5));
-	cpBodySetVelocity(body, cpv(0, 300));
+	body_ = cpSpaceAddBody(space, cpBodyNew(10.0f, cpMomentForCircle(10.0f, 0.0f, radius, cpvzero)));
+	cpBodySetPosition(body_, cpv(0, -240 + radius+5));
+	cpBodySetVelocity(body_, cpv(0, 300));
 
-	shape = cpSpaceAddShape(space, cpCircleShapeNew(body, radius, cpvzero));
+	shape = cpSpaceAddShape(space, cpCircleShapeNew(body_, radius, cpvzero));
 	cpShapeSetElasticity(shape, 0.0f);
 	cpShapeSetFriction(shape, 0.9f);
 	

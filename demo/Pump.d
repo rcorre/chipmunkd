@@ -19,12 +19,12 @@
  * SOFTWARE.
  */
  
-#include "chipmunk/chipmunk.h"
-#include "ChipmunkDemo.h"
+import chipmunk.chipmunk;
+import ChipmunkDemo;
 
 static cpConstraint *motor;
 
-#define numBalls 5
+enum numBalls = 5;
 static cpBody *balls[numBalls];
 
 static void
@@ -52,14 +52,14 @@ update(cpSpace *space, double dt)
 static cpBody *
 add_ball(cpSpace *space, cpVect pos)
 {
-	cpBody *body = cpSpaceAddBody(space, cpBodyNew(1.0f, cpMomentForCircle(1.0f, 30, 0, cpvzero)));
-	cpBodySetPosition(body, pos);
+	cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(1.0f, cpMomentForCircle(1.0f, 30, 0, cpvzero)));
+	cpBodySetPosition(body_, pos);
 	
-	cpShape *shape = cpSpaceAddShape(space, cpCircleShapeNew(body, 30, cpvzero));
+	cpShape *shape = cpSpaceAddShape(space, cpCircleShapeNew(body_, 30, cpvzero));
 	cpShapeSetElasticity(shape, 0.0f);
 	cpShapeSetFriction(shape, 0.5f);
 	
-	return body;
+	return body_;
 }
 
 static cpSpace *

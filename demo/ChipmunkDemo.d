@@ -31,27 +31,17 @@
 	about Chipmunk which may change with little to no warning.
 */
  
-#include <stdio.h>
-#include <string.h>
-#include <limits.h>
-#include <stdarg.h>
+import core.stdc.stdio;
+import core.stdc.string;
+import core.stdc.limits;
+import core.stdc.stdarg;
 
-#ifdef _MSC_VER
-  // Needed for VS 2015 compatability
-  // http://stackoverflow.com/questions/30412951/unresolved-external-symbol-imp-fprintf-and-imp-iob-func-sdl2
-  #if _MSC_VER >= 1700
-	#ifndef __iob_func
-	  extern "C" { FILE __iob_func[3] = { *stdin,*stdout,*stderr }; }
-	#endif
-  #endif
-#endif
+import GL.glew;
+import GL.glfw;
 
-#include "GL/glew.h"
-#include "GL/glfw.h"
-
-#include "chipmunk/chipmunk_private.h"
-#include "ChipmunkDemo.h"
-#include "ChipmunkDemoTextSupport.h"
+import chipmunk.chipmunk_private;
+import ChipmunkDemo;
+import ChipmunkDemoTextSupport;
 
 static ChipmunkDemo *demos;
 static int demo_count = 0;
@@ -72,12 +62,12 @@ cpBool ChipmunkDemoRightClick = cpFalse;
 cpBool ChipmunkDemoRightDown = cpFalse;
 cpVect ChipmunkDemoKeyboard = {};
 
-static cpBody *mouse_body = NULL;
-static cpConstraint *mouse_joint = NULL;
+static cpBody *mouse_body = null;
+static cpConstraint *mouse_joint = null;
 
-char const *ChipmunkDemoMessageString = NULL;
+const char *ChipmunkDemoMessageString = null;
 
-#define GRABBABLE_MASK_BIT (1<<31)
+enum GRABBABLE_MASK_BIT = (1<<31);
 cpShapeFilter GRAB_FILTER = {CP_NO_GROUP, GRABBABLE_MASK_BIT, GRABBABLE_MASK_BIT};
 cpShapeFilter NOT_GRABBABLE_FILTER = {CP_NO_GROUP, ~GRABBABLE_MASK_BIT, ~GRABBABLE_MASK_BIT};
 
@@ -90,7 +80,7 @@ static void ShapeFreeWrap(cpSpace *space, cpShape *shape, void *unused){
 }
 
 static void PostShapeFree(cpShape *shape, cpSpace *space){
-	cpSpaceAddPostStepCallback(space, (cpPostStepFunc)ShapeFreeWrap, shape, NULL);
+	cpSpaceAddPostStepCallback(space, cast(cpPostStepFunc)ShapeFreeWrap, shape, null);
 }
 
 static void ConstraintFreeWrap(cpSpace *space, cpConstraint *constraint, void *unused){
@@ -99,27 +89,27 @@ static void ConstraintFreeWrap(cpSpace *space, cpConstraint *constraint, void *u
 }
 
 static void PostConstraintFree(cpConstraint *constraint, cpSpace *space){
-	cpSpaceAddPostStepCallback(space, (cpPostStepFunc)ConstraintFreeWrap, constraint, NULL);
+	cpSpaceAddPostStepCallback(space, cast(cpPostStepFunc)ConstraintFreeWrap, constraint, null);
 }
 
-static void BodyFreeWrap(cpSpace *space, cpBody *body, void *unused){
-	cpSpaceRemoveBody(space, body);
-	cpBodyFree(body);
+static void BodyFreeWrap(cpSpace *space, cpBody *body_, void *unused){
+	cpSpaceRemoveBody(space, body_);
+	cpBodyFree(body_);
 }
 
-static void PostBodyFree(cpBody *body, cpSpace *space){
-	cpSpaceAddPostStepCallback(space, (cpPostStepFunc)BodyFreeWrap, body, NULL);
+static void PostBodyFree(cpBody *body_, cpSpace *space){
+	cpSpaceAddPostStepCallback(space, cast(cpPostStepFunc)BodyFreeWrap, body_, null);
 }
 
 // Safe and future proof way to remove and free all objects that have been added to the space.
 void
 ChipmunkDemoFreeSpaceChildren(cpSpace *space)
 {
-	// Must remove these BEFORE freeing the body or you will access dangling pointers.
-	cpSpaceEachShape(space, (cpSpaceShapeIteratorFunc)PostShapeFree, space);
-	cpSpaceEachConstraint(space, (cpSpaceConstraintIteratorFunc)PostConstraintFree, space);
+	// Must remove these BEFORE freeing the body_ or you will access dangling pointers.
+	cpSpaceEachShape(space, cast(cpSpaceShapeIteratorFunc)PostShapeFree, space);
+	cpSpaceEachConstraint(space, cast(cpSpaceConstraintIteratorFunc)PostConstraintFree, space);
 	
-	cpSpaceEachBody(space, (cpSpaceBodyIteratorFunc)PostBodyFree, space);
+	cpSpaceEachBody(space, cast(cpSpaceBodyIteratorFunc)PostBodyFree, space);
 }
 
 static void
@@ -148,14 +138,14 @@ ColorForShape(cpShape *shape, cpDataPointer data)
 	if(cpShapeGetSensor(shape)){
 		return LAColor(1.0f, 0.1f);
 	} else {
-		cpBody *body = cpShapeGetBody(shape);
+		cpBody *body_ = cpShapeGetBody(shape);
 		
-		if(cpBodyIsSleeping(body)){
+		if(cpBodyIsSleeping(body_)){
 			return LAColor(0.2f, 1.0f);
-		} else if(body->sleeping.idleTime > shape->space->sleepTimeThreshold) {
+		} else if(body_.sleeping.idleTime > shape.space.sleepTimeThreshold) {
 			return LAColor(0.66f, 1.0f);
 		} else {
-			uint32_t val = (uint32_t)shape->hashid;
+			uint32_t val = cast(uint32_t)shape.hashid;
 			
 			// scramble the bits up using Robert Jenkins' 32 bit integer hash function
 			val = (val+0x7ed55d16) + (val<<12);
@@ -165,19 +155,19 @@ ColorForShape(cpShape *shape, cpDataPointer data)
 			val = (val+0xfd7046c5) + (val<<3);
 			val = (val^0xb55a4f09) ^ (val>>16);
 			
-			GLfloat r = (GLfloat)((val>>0) & 0xFF);
-			GLfloat g = (GLfloat)((val>>8) & 0xFF);
-			GLfloat b = (GLfloat)((val>>16) & 0xFF);
+			GLfloat r = cast(GLfloat)((val>>0) & 0xFF);
+			GLfloat g = cast(GLfloat)((val>>8) & 0xFF);
+			GLfloat b = cast(GLfloat)((val>>16) & 0xFF);
 			
-			GLfloat max = (GLfloat)cpfmax(cpfmax(r, g), b);
-			GLfloat min = (GLfloat)cpfmin(cpfmin(r, g), b);
-			GLfloat intensity = (cpBodyGetType(body) == CP_BODY_TYPE_STATIC ? 0.15f : 0.75f);
+			GLfloat max = cast(GLfloat)cpfmax(cpfmax(r, g), b);
+			GLfloat min = cast(GLfloat)cpfmin(cpfmin(r, g), b);
+			GLfloat intensity = (cpBodyGetType(body_) == CP_BODY_TYPE_STATIC ? 0.15f : 0.75f);
 			
 			// Saturate and scale the color
 			if(min == max){
 				return RGBAColor(intensity, 0.0f, 0.0f, 1.0f);
 			} else {
-				GLfloat coef = (GLfloat)intensity/(max - min);
+				GLfloat coef = cast(GLfloat)intensity/(max - min);
 				return RGBAColor(
 					(r - min)*coef,
 					(g - min)*coef,
@@ -200,13 +190,13 @@ ChipmunkDemoDefaultDrawImpl(cpSpace *space)
 		DrawPolygon,
 		DrawDot,
 		
-		(cpSpaceDebugDrawFlags)(CP_SPACE_DEBUG_DRAW_SHAPES | CP_SPACE_DEBUG_DRAW_CONSTRAINTS | CP_SPACE_DEBUG_DRAW_COLLISION_POINTS),
+		cast(cpSpaceDebugDrawFlags)(CP_SPACE_DEBUG_DRAW_SHAPES | CP_SPACE_DEBUG_DRAW_CONSTRAINTS | CP_SPACE_DEBUG_DRAW_COLLISION_POINTS),
 		
 		{200.0f/255.0f, 210.0f/255.0f, 230.0f/255.0f, 1.0f},
 		ColorForShape,
 		{0.0f, 0.75f, 0.0f, 1.0f},
 		{1.0f, 0.0f, 0.0f, 1.0f},
-		NULL,
+		null,
 	};
 	
 	cpSpaceDebugDraw(space, &drawOptions);
@@ -229,13 +219,13 @@ static int max_constraints = 0;
 static void
 DrawInfo()
 {
-	int arbiters = space->arbiters->num;
+	int arbiters = space.arbiters.num;
 	int points = 0;
 	
 	for(int i=0; i<arbiters; i++)
-		points += ((cpArbiter *)(space->arbiters->arr[i]))->count;
+		points += (cast(cpArbiter *)(space.arbiters.arr[i])).count;
 	
-	int constraints = (space->constraints->num + points)*space->iterations;
+	int constraints = (space.constraints.num + points)*space.iterations;
 	
 	max_arbiters = arbiters > max_arbiters ? arbiters : max_arbiters;
 	max_points = points > max_points ? points : max_points;
@@ -249,19 +239,19 @@ DrawInfo()
 		"Constraints x Iterations: %d (%d)\n"
 		"Time:% 5.2fs, KE:% 5.2e";
 	
-	cpArray *bodies = space->dynamicBodies;
+	cpArray *bodies = space.dynamicBodies;
 	cpFloat ke = 0.0f;
-	for(int i=0; i<bodies->num; i++){
-		cpBody *body = (cpBody *)bodies->arr[i];
-		if(body->m == INFINITY || body->i == INFINITY) continue;
+	for(int i=0; i<bodies.num; i++){
+		cpBody *body_ = cast(cpBody *)bodies.arr[i];
+		if(body_.m == INFINITY || body_.i == INFINITY) continue;
 		
-		ke += body->m*cpvdot(body->v, body->v) + body->i*body->w*body->w;
+		ke += body_.m*cpvdot(body_.v, body_.v) + body_.i*body_.w*body_.w;
 	}
 	
 	sprintf(buffer, format,
 		arbiters, max_arbiters,
 		points, max_points,
-		space->constraints->num, space->iterations,
+		space.constraints.num, space.iterations,
 		constraints, max_constraints,
 		ChipmunkDemoTime, (ke < 1e-10f ? 0.0f : ke)
 	);
@@ -273,7 +263,7 @@ static char PrintStringBuffer[1024*8];
 static char *PrintStringCursor;
 
 void
-ChipmunkDemoPrintString(char const *fmt, ...)
+ChipmunkDemoPrintString(const char *fmt, ...)
 {
 	ChipmunkDemoMessageString = PrintStringBuffer;
 	
@@ -296,9 +286,9 @@ Tick(double dt)
 		ChipmunkDebugDrawClearRenderer();
 		ChipmunkDemoTextClearRenderer();
 		
-		cpVect new_point = cpvlerp(mouse_body->p, ChipmunkDemoMouse, 0.25f);
-		mouse_body->v = cpvmult(cpvsub(new_point, mouse_body->p), 60.0f);
-		mouse_body->p = new_point;
+		cpVect new_point = cpvlerp(mouse_body_.p, ChipmunkDemoMouse, 0.25f);
+		mouse_body_.v = cpvmult(cpvsub(new_point, mouse_body_.p), 60.0f);
+		mouse_body_.p = new_point;
 		
 		demos[demo_index].updateFunc(space, dt);
 		
@@ -333,8 +323,8 @@ Display(void)
 {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glTranslatef((GLfloat)translate.x, (GLfloat)translate.y, 0.0f);
-	glScalef((GLfloat)scale, (GLfloat)scale, 1.0f);
+	glTranslatef(cast(GLfloat)translate.x, cast(GLfloat)translate.y, 0.0f);
+	glScalef(cast(GLfloat)scale, cast(GLfloat)scale, 1.0f);
 	
 	Update();
 	
@@ -342,7 +332,7 @@ Display(void)
 	demos[demo_index].drawFunc(space);
 	
 //	// Highlight the shape under the mouse because it looks neat.
-//	cpShape *nearest = cpSpacePointQueryNearest(space, ChipmunkDemoMouse, 0.0f, CP_ALL_LAYERS, CP_NO_GROUP, NULL);
+//	cpShape *nearest = cpSpacePointQueryNearest(space, ChipmunkDemoMouse, 0.0f, CP_ALL_LAYERS, CP_NO_GROUP, null);
 //	if(nearest) ChipmunkDebugDrawShape(nearest, RGBAColor(1.0f, 0.0f, 0.0f, 1.0f), LAColor(0.0f, 0.0f));
 	
 	// Draw the renderer contents and reset it back to the last tick's state.
@@ -373,12 +363,12 @@ Reshape(int width, int height)
 {
 	glViewport(0, 0, width, height);
 	
-	float scale = (float)cpfmin(width/640.0, height/480.0);
+	float scale = cast(float)cpfmin(width/640.0, height/480.0);
 	float hw = width*(0.5f/scale);
 	float hh = height*(0.5f/scale);
 	
 	ChipmunkDebugDrawPointLineScale = scale;
-	glLineWidth((GLfloat)scale);
+	glLineWidth(cast(GLfloat)scale);
 	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -406,7 +396,7 @@ RunDemo(int index)
 	Accumulator = 0.0;
 	LastTime = glfwGetTime();
 	
-	mouse_joint = NULL;
+	mouse_joint = null;
 	ChipmunkDemoMessageString = "";
 	max_arbiters = 0;
 	max_points = 0;
@@ -438,7 +428,7 @@ Keyboard(int key, int state)
 		glDisable(GL_POINT_SMOOTH);
 	}
 	
-	GLfloat translate_increment = 50.0f/(GLfloat)scale;
+	GLfloat translate_increment = 50.0f/cast(GLfloat)scale;
 	GLfloat scale_increment = 1.2f;
 	if(key == '5'){
 		translate.x = 0.0f;
@@ -501,16 +491,16 @@ Click(int button, int state)
 				// Use the closest point on the surface if the click is outside of the shape.
 				cpVect nearest = (info.distance > 0.0f ? info.point : ChipmunkDemoMouse);
 				
-				cpBody *body = cpShapeGetBody(shape);
-				mouse_joint = cpPivotJointNew2(mouse_body, body, cpvzero, cpBodyWorldToLocal(body, nearest));
-				mouse_joint->maxForce = 50000.0f;
-				mouse_joint->errorBias = cpfpow(1.0f - 0.15f, 60.0f);
+				cpBody *body_ = cpShapeGetBody(shape);
+				mouse_joint = cpPivotJointNew2(mouse_body, body_, cpvzero, cpBodyWorldToLocal(body_, nearest));
+				mouse_joint.maxForce = 50000.0f;
+				mouse_joint.errorBias = cpfpow(1.0f - 0.15f, 60.0f);
 				cpSpaceAddConstraint(space, mouse_joint);
 			}
 		} else if(mouse_joint){
 			cpSpaceRemoveConstraint(space, mouse_joint);
 			cpConstraintFree(mouse_joint);
-			mouse_joint = NULL;
+			mouse_joint = null;
 		}
 	} else if(button == GLFW_MOUSE_BUTTON_2){
 		ChipmunkDemoRightDown = ChipmunkDemoRightClick = (state == GLFW_PRESS);

@@ -19,13 +19,13 @@
  * SOFTWARE.
  */
  
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
+import core.stdc.stdlib;
+import core.stdc.stdio;
+import core.stdc.math;
+import core.stdc.string;
 
-#include "chipmunk/chipmunk_private.h"
-#include "ChipmunkDemo.h"
+import chipmunk.chipmunk_private;
+import ChipmunkDemo;
 
 static cpBool DrawContacts(cpArbiter *arb, cpSpace *space, void *data){
 	cpContactPointSet set = cpArbiterGetContactPointSet(arb);
@@ -44,15 +44,16 @@ static void
 update(cpSpace *space)
 {
 	int steps = 1;
-	cpFloat dt = 1.0f/60.0f/(cpFloat)steps;
+	cpFloat dt = 1.0f/60.0f/cast(cpFloat)steps;
 	
 	for(int i=0; i<steps; i++){
 		cpSpaceStep(space, dt);
 	}
 }
 
-#define MAX(a, b) (a > b ? a : b)
-#define MIN(a, b) (a < b ? a : b)
+import std.algorithm;
+enum MAX = std.algorithm.max;
+enum MIN = std.algorithm.min;
 
 static cpSpace *
 init(void)
@@ -61,17 +62,17 @@ init(void)
 	cpSpaceSetIterations(space, 5);
 	cpSpaceSetDamping(space, 0.1f);
 	
-	cpSpaceSetDefaultCollisionHandler(space, NULL, DrawContacts, NULL, NULL, NULL);
+	cpSpaceSetDefaultCollisionHandler(space, null, DrawContacts, null, null, null);
 	
 	{
 		cpFloat mass = 1.0f;
 		cpFloat length = 100.0f;
 		cpVect a = cpv(-length/2.0f, 0.0f), b = cpv(length/2.0f, 0.0f);
 		
-		cpBody *body = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForSegment(mass, a, b)));
-		cpBodySetPos(body, cpv(-160.0f, 80.0f));
+		cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForSegment(mass, a, b)));
+		cpBodySetPos(body_, cpv(-160.0f, 80.0f));
 		
-		cpSpaceAddShape(space, cpSegmentShapeNew(body, a, b, 30.0f));
+		cpSpaceAddShape(space, cpSegmentShapeNew(body_, a, b, 30.0f));
 	}
 	
 	{
@@ -80,24 +81,24 @@ init(void)
 		
 		cpVect verts[NUM_VERTS];
 		for(int i=0; i<NUM_VERTS; i++){
-			cpFloat angle = -2*M_PI*i/((cpFloat) NUM_VERTS);
+			cpFloat angle = -2*M_PI*i/(cast(cpFloat) NUM_VERTS);
 			verts[i] = cpv(40*cos(angle), 40*sin(angle));
 		}
 		
-		cpBody *body = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForPoly(mass, NUM_VERTS, verts, cpvzero)));
-		cpBodySetPos(body, cpv(-0.0f, 80.0f));
+		cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForPoly(mass, NUM_VERTS, verts, cpvzero)));
+		cpBodySetPos(body_, cpv(-0.0f, 80.0f));
 		
-		cpSpaceAddShape(space, cpPolyShapeNew(body, NUM_VERTS, verts, cpvzero));
+		cpSpaceAddShape(space, cpPolyShapeNew(body_, NUM_VERTS, verts, cpvzero));
 	}
 	
 	{
 		cpFloat mass = 1.0f;
 		cpFloat r = 60.0f;
 		
-		cpBody *body = cpSpaceAddBody(space, cpBodyNew(mass, INFINITY));
-		cpBodySetPos(body, cpv(160.0, 80.0f));
+		cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, INFINITY));
+		cpBodySetPos(body_, cpv(160.0, 80.0f));
 		
-		cpSpaceAddShape(space, cpCircleShapeNew(body, r, cpvzero));
+		cpSpaceAddShape(space, cpCircleShapeNew(body_, r, cpvzero));
 	}
 	
 	cpBody *staticBody = cpSpaceGetStaticBody(space);

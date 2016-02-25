@@ -19,14 +19,14 @@
  * SOFTWARE.
  */
  
-#include "chipmunk/chipmunk.h"
-#include "ChipmunkDemo.h"
+import chipmunk.chipmunk;
+import ChipmunkDemo;
 
 static const int image_width = 188;
 static const int image_height = 35;
 static const int image_row_length = 24;
 
-static const unsigned char image_bitmap[] = {
+static const byte image_bitmap[] = {
 	15,-16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,-64,15,63,-32,-2,0,0,0,0,0,0,0,
 	0,0,0,0,0,0,0,0,0,0,0,31,-64,15,127,-125,-1,-128,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	0,0,0,127,-64,15,127,15,-1,-64,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,-64,15,-2,
@@ -62,13 +62,13 @@ static const unsigned char image_bitmap[] = {
 	63,15,-61,-16,0,31,-127,-127,-8,31,-1,-127,-8,31,-128,7,-128,0,0
 };
 
-static inline int
+static int
 get_pixel(int x, int y)
 {
 	return (image_bitmap[(x>>3) + y*image_row_length]>>(~x&0x7)) & 1;
 }
 
-static int bodyCount = 0;
+static int body_Count = 0;
 
 static void
 update(cpSpace *space, double dt)
@@ -77,15 +77,15 @@ update(cpSpace *space, double dt)
 }
 
 static void
-DrawDot(cpBody *body, void *unused)
+DrawDot(cpBody *body_, void *unused)
 {
-	ChipmunkDebugDrawDot(3.0, cpBodyGetPosition(body), RGBAColor(200.0f/255.0f, 210.0f/255.0f, 230.0f/255.0f, 1.0f));
+	ChipmunkDebugDrawDot(3.0, cpBodyGetPosition(body_), RGBAColor(200.0f/255.0f, 210.0f/255.0f, 230.0f/255.0f, 1.0f));
 }
 
 static void
 draw(cpSpace *space)
 {
-	cpSpaceEachBody(space, DrawDot, NULL);
+	cpSpaceEachBody(space, DrawDot, null);
 	
 //	ChipmunkDebugDrawCollisionPoints(space);
 }
@@ -93,10 +93,10 @@ draw(cpSpace *space)
 static cpShape *
 make_ball(cpFloat x, cpFloat y)
 {
-	cpBody *body = cpBodyNew(1.0, INFINITY);
-	cpBodySetPosition(body, cpv(x, y));
+	cpBody *body_ = cpBodyNew(1.0, INFINITY);
+	cpBodySetPosition(body_, cpv(x, y));
 
-	cpShape *shape = cpCircleShapeNew(body, 0.95, cpvzero);
+	cpShape *shape = cpCircleShapeNew(body_, 0.95, cpvzero);
 	cpShapeSetElasticity(shape, 0.0);
 	cpShapeSetFriction(shape, 0.0);
 	
@@ -116,7 +116,7 @@ init(void)
 	
 	bodyCount = 0;
 	
-	cpBody *body;
+	cpBody *body_;
 	cpShape *shape;
 	
 	for(int y=0; y<image_height; y++){
@@ -134,11 +134,11 @@ init(void)
 		}
 	}
 	
-	body = cpSpaceAddBody(space, cpBodyNew(1e9, INFINITY));
-	cpBodySetPosition(body, cpv(-1000, -10));
-	cpBodySetVelocity(body, cpv(400, 0));
+	body_ = cpSpaceAddBody(space, cpBodyNew(1e9, INFINITY));
+	cpBodySetPosition(body_, cpv(-1000, -10));
+	cpBodySetVelocity(body_, cpv(400, 0));
 
-	shape = cpSpaceAddShape(space, cpCircleShapeNew(body, 8.0f, cpvzero));
+	shape = cpSpaceAddShape(space, cpCircleShapeNew(body_, 8.0f, cpvzero));
 	cpShapeSetElasticity(shape, 0.0);
 	cpShapeSetFriction(shape, 0.0);
 	cpShapeSetFilter(shape, NOT_GRABBABLE_FILTER);
