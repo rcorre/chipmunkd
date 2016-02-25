@@ -4,6 +4,8 @@ import core.stdc.config;
 import core.stdc.math;
 import core.stdc.float_;
 
+import chipmunk.cpVect;
+
 extern (C):
 
 enum CP_NO_GROUP = 0;
@@ -36,6 +38,31 @@ struct cpVect
 {
     cpFloat x;
     cpFloat y;
+
+    cpVect opBinary(string op)(const cpFloat s) const if (op == "*")
+    {
+        return cpvmult(this, s);
+    }
+
+    cpVect opBinary(string op)(const cpVect v2) const if (op == "+")
+    {
+        return cpvadd(this, v2);
+    }
+
+    cpVect opBinary(string op)(const cpVect v2) const if (op == "-")
+    {
+        return cpvsub(this, v2);
+    }
+
+    cpBool opEquals()(const cpVect v2) const if (op == "==")
+    {
+        return cpveql(this, v2);
+    }
+
+    cpVect opUnary(string op)() const if (op == "-")
+    {
+        return cpvneg(this);
+    }
 }
 
 struct cpTransform
