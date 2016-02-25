@@ -1,0 +1,10 @@
+name "demo"
+description "A demo of using chipmunkd with Allegro5"
+copyright "Copyright © 2016, rcorre"
+authors "rcorre"
+license "MIT"
+
+dependency "allegro" version="2.0.3+5.0.10"
+dependency "chipmunkd" path=".."
+
+libs "chipmunk" "allegro" "allegro_primitives" "allegro_color"
