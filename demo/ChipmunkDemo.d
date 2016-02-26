@@ -592,34 +592,31 @@ TimeTrial(int index, int count)
 	fflush(stdout);
 }
 
-extern ChipmunkDemo LogoSmash;
-extern ChipmunkDemo PyramidStack;
-extern ChipmunkDemo Plink;
-extern ChipmunkDemo BouncyHexagons;
-extern ChipmunkDemo Tumble;
-extern ChipmunkDemo PyramidTopple;
-extern ChipmunkDemo Planet;
-extern ChipmunkDemo Springies;
-extern ChipmunkDemo Pump;
-extern ChipmunkDemo TheoJansen;
-extern ChipmunkDemo Query;
-extern ChipmunkDemo OneWay;
-extern ChipmunkDemo Player;
-extern ChipmunkDemo Joints;
-extern ChipmunkDemo Tank;
-extern ChipmunkDemo Chains;
-extern ChipmunkDemo Crane;
-extern ChipmunkDemo Buoyancy;
-extern ChipmunkDemo ContactGraph;
-extern ChipmunkDemo Slice;
-extern ChipmunkDemo Convex;
-extern ChipmunkDemo Unicycle;
-extern ChipmunkDemo Sticky;
-extern ChipmunkDemo Shatter;
-extern ChipmunkDemo GJK;
-
-extern ChipmunkDemo bench_list[];
-extern int bench_count;
+import LogoSmash;
+import PyramidStack;
+import Plink;
+import BouncyHexagons;
+import Tumble;
+import PyramidTopple;
+import Planet;
+import Springies;
+import Pump;
+import TheoJansen;
+import Query;
+import OneWay;
+import Player;
+import Joints;
+import Tank;
+import Chains;
+import Crane;
+import Buoyancy;
+import ContactGraph;
+import Slice;
+import Convex;
+import Unicycle;
+import Sticky;
+import Shatter;
+import GJK;
 
 int
 main(int argc, const char **argv)
