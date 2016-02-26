@@ -19,7 +19,7 @@
  * SOFTWARE.
  */
  
-import chipmunk.chipmunk;
+import chipmunk;
 import ChipmunkDemo;
 
 static cpVect QUERY_START = {0,0};

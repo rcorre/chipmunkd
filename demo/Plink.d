@@ -19,7 +19,7 @@
  * SOFTWARE.
  */
  
-import chipmunk.chipmunk;
+import chipmunk;
 import ChipmunkDemo;
 
 static cpFloat pentagon_mass = 0.0f;

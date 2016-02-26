@@ -26,7 +26,7 @@ import core.stdc.stdio;
 import GL.glew;
 import GL.glfw;
 
-import chipmunk.chipmunk;
+import chipmunk;
 
 import ChipmunkDemoShaderSupport;
 

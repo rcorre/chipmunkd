@@ -19,7 +19,7 @@
  * SOFTWARE.
  */
  
-import chipmunk.chipmunk;
+import chipmunk;
 import chipmunk.chipmunk_unsafe;
 import ChipmunkDemo;
 

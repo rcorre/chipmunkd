@@ -21,7 +21,7 @@
 
 import core.stdc.string;
 
-import chipmunk.chipmunk;
+import chipmunk;
 
 import ChipmunkDemo;
 

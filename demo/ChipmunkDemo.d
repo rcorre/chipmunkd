@@ -39,6 +39,7 @@ import core.stdc.stdarg;
 import GL.glew;
 import GL.glfw;
 
+import chipmunk;
 import chipmunk.chipmunk_private;
 import ChipmunkDemo;
 import ChipmunkDemoTextSupport;

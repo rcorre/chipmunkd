@@ -25,7 +25,7 @@
  * Read more here: http://en.wikipedia.org/wiki/Theo_Jansen
  */
  
-import chipmunk.chipmunk;
+import chipmunk;
 import ChipmunkDemo;
 
 static cpConstraint *motor;
