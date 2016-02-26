@@ -41,7 +41,7 @@ update(cpSpace *space)
 }
 
 static cpSpace *
-init(void)
+init()
 {
 	cpSpace *space = cpSpaceNew();
 	cpSpaceSetIterations(space, 5);

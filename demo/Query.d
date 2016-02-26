@@ -76,7 +76,7 @@ update(cpSpace *space, double dt)
 }
 
 static cpSpace *
-init(void)
+init()
 {
 	QUERY_START = cpvzero;
 	

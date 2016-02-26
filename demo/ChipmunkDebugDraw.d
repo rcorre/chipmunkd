@@ -50,7 +50,7 @@ static GLuint vao = 0;
 static GLuint vbo = 0;
 
 void
-ChipmunkDebugDrawInit(void)
+ChipmunkDebugDrawInit()
 {
 	// Setup the AA shader.
 	GLint vshader = CompileShader(GL_VERTEX_SHADER, GLSL(
@@ -63,7 +63,7 @@ ChipmunkDebugDrawInit(void)
 		varying vec4 v_fill_color;
 		varying vec4 v_outline_color;
 		
-		void main(void){
+		void main(){
 			// TODO: get rid of the GL 2.x matrix bit eventually?
 			gl_Position = gl_ModelViewProjectionMatrix*vec4(vertex, 0.0, 1.0);
 			
@@ -87,7 +87,7 @@ ChipmunkDebugDrawInit(void)
 			return smoothstep(t1, t2, f);
 		}
 		
-		void main(void)
+		void main()
 		{
 			float l = length(v_aa_coord);
 			
@@ -307,7 +307,7 @@ void ChipmunkDebugDrawBB(cpBB bb, cpSpaceDebugColor color)
 }
 
 void
-ChipmunkDebugDrawFlushRenderer(void)
+ChipmunkDebugDrawFlushRenderer()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Triangle)*triangle_count, triangle_buffer, GL_STREAM_DRAW);
@@ -326,20 +326,20 @@ ChipmunkDebugDrawFlushRenderer(void)
 }
 
 void
-ChipmunkDebugDrawClearRenderer(void)
+ChipmunkDebugDrawClearRenderer()
 {
 	triangle_count = 0;
 }
 
 static int pushed_triangle_count = 0;
 void
-ChipmunkDebugDrawPushRenderer(void)
+ChipmunkDebugDrawPushRenderer()
 {
 	pushed_triangle_count = triangle_count;
 }
 
 void
-ChipmunkDebugDrawPopRenderer(void)
+ChipmunkDebugDrawPopRenderer()
 {
 	triangle_count = pushed_triangle_count;
 }

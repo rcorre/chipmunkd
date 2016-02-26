@@ -139,7 +139,7 @@ update(cpSpace *space, double dt)
 }
 
 static cpSpace *
-init(void)
+init()
 {
 	ChipmunkDemoMessageString = "Right click and drag to slice up the block.";
 	

@@ -111,7 +111,7 @@ else
 }
 
 static cpSpace *
-init(void)
+init()
 {
 	ChipmunkDemoMessageString = messageBuffer;
 	

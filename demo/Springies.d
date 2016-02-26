@@ -63,7 +63,7 @@ add_bar(cpSpace *space, cpVect a, cpVect b, int group)
 }
 
 static cpSpace *
-init(void)
+init()
 {
 	cpSpace *space = cpSpaceNew();
 	cpBody *staticBody = cpSpaceGetStaticBody(space);

@@ -48,7 +48,7 @@ add_domino(cpSpace *space, cpVect pos, cpBool flipped)
 }
 
 static cpSpace *
-init(void)
+init()
 {
 	cpSpace *space = cpSpaceNew();
 	cpSpaceSetIterations(space, 30);

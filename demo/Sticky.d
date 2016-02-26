@@ -128,7 +128,7 @@ update(cpSpace *space, double dt)
 }
 
 static cpSpace *
-init(void)
+init()
 {
 	ChipmunkDemoMessageString = "Sticky collisions using the cpArbiter data pointer.";
 	

@@ -196,7 +196,7 @@ update(cpSpace *space, double dt)
 }
 
 static cpSpace *
-init(void)
+init()
 {
 	ChipmunkDemoMessageString = "Right click something to shatter it.";
 	

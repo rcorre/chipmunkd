@@ -60,7 +60,7 @@ update(cpSpace *space, double dt)
 enum NUM_VERTS = 5;
 
 static cpSpace *
-init(void)
+init()
 {
 	ChipmunkDemoMessageString = "Right click to make pentagons static/dynamic.";
 	

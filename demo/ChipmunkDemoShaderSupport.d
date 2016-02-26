@@ -33,7 +33,7 @@ import ChipmunkDemoShaderSupport;
 alias CHECK_GL_ERRORS = CheckGLErrors;
 
 void
-CheckGLErrors(void)
+CheckGLErrors()
 {
 	for(GLenum err = glGetError(); err; err = glGetError()){
 		if(err){

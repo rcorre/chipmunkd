@@ -304,7 +304,7 @@ Tick(double dt)
 }
 
 static void
-Update(void)
+Update()
 {
 	double time = glfwGetTime();
 	double dt = time - LastTime;
@@ -320,7 +320,7 @@ Update(void)
 }
 
 static void
-Display(void)
+Display()
 {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -530,7 +530,7 @@ WindowClose()
 }
 
 static void
-SetupGL(void)
+SetupGL()
 {
 	glewExperimental = GL_TRUE;
 	cpAssertHard(glewInit() == GLEW_NO_ERROR, "There was an error initializing GLEW.");

@@ -107,7 +107,7 @@ update(cpSpace *space, double dt)
 }
 
 static cpSpace *
-init(void)
+init()
 {
 	cpSpace *space = cpSpaceNew();
 	space.iterations = 10;

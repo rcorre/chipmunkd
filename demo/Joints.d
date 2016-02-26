@@ -107,7 +107,7 @@ addChassis(cpSpace *space, cpVect pos, cpVect boxOffset)
 }
 
 static cpSpace *
-init(void)
+init()
 {
 	cpSpace *space = cpSpaceNew();
 	cpSpaceSetIterations(space, 10);

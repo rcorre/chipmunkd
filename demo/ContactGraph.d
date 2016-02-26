@@ -103,7 +103,7 @@ enum WIDTH = 4.0f;
 enum HEIGHT = 30.0f;
 
 static cpSpace *
-init(void)
+init()
 {
 	cpSpace *space = cpSpaceNew();
 	cpSpaceSetIterations(space, 30);

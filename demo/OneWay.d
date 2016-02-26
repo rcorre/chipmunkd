@@ -52,7 +52,7 @@ update(cpSpace *space, double dt)
 }
 
 static cpSpace *
-init(void)
+init()
 {
 	ChipmunkDemoMessageString = "One way platforms are trivial in Chipmunk using a very simple collision callback.";
 	

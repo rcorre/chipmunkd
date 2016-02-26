@@ -63,7 +63,7 @@ add_ball(cpSpace *space, cpVect pos)
 }
 
 static cpSpace *
-init(void)
+init()
 {
 	ChipmunkDemoMessageString = "Use the arrow keys to control the machine.";
 	

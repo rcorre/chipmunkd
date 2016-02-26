@@ -56,7 +56,7 @@ enum MAX = std.algorithm.max;
 enum MIN = std.algorithm.min;
 
 static cpSpace *
-init(void)
+init()
 {
 	cpSpace *space = cpSpaceNew();
 	cpSpaceSetIterations(space, 5);

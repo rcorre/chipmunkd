@@ -83,7 +83,7 @@ HookCrate(cpArbiter *arb, cpSpace *space, void *data)
 
 
 static cpSpace *
-init(void)
+init()
 {
 	ChipmunkDemoMessageString = "Control the crane by moving the mouse. Right click to release.";
 	

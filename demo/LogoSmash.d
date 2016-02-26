@@ -104,7 +104,7 @@ make_ball(cpFloat x, cpFloat y)
 }
 
 static cpSpace *
-init(void)
+init()
 {
 	cpSpace *space = cpSpaceNew();
 	cpSpaceSetIterations(space, 1);

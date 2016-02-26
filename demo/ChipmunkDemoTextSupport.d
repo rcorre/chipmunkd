@@ -49,7 +49,7 @@ static GLuint vbo = 0;
 static int glyph_indexes[256];
 
 void
-ChipmunkDemoTextInit(void)
+ChipmunkDemoTextInit()
 {
 	GLint vshader = CompileShader(GL_VERTEX_SHADER, q{
 		attribute vec2 vertex;
@@ -59,7 +59,7 @@ ChipmunkDemoTextInit(void)
 		varying vec2 v_tex_coord;
 		varying vec4 v_color;
 		
-		void main(void){
+		void main(){
 			// TODO: get rid of the GL 2.x matrix bit eventually?
 			gl_Position = gl_ModelViewProjectionMatrix*vec4(vertex, 0.0, 1.0);
 			
@@ -80,7 +80,7 @@ ChipmunkDemoTextInit(void)
 			return smoothstep(t1, t2, f);
 		}
 		
-		void main(void)
+		void main()
 		{
 			float sdf = texture2D(u_texture, v_tex_coord).a;
 			
@@ -196,7 +196,7 @@ PushChar(int character, GLfloat x, GLfloat y, cpSpaceDebugColor color)
 }
 
 void
-ChipmunkDemoTextFlushRenderer(void)
+ChipmunkDemoTextFlushRenderer()
 {
 //	triangle_count = 0;
 //	ChipmunkDemoTextDrawString(cpv(-300, 0), "0.:,'");
@@ -217,20 +217,20 @@ else
 }
 
 void
-ChipmunkDemoTextClearRenderer(void)
+ChipmunkDemoTextClearRenderer()
 {
 	triangle_count = 0;
 }
 
 static int pushed_triangle_count = 0;
 void
-ChipmunkDemoTextPushRenderer(void)
+ChipmunkDemoTextPushRenderer()
 {
 	pushed_triangle_count = triangle_count;
 }
 
 void
-ChipmunkDemoTextPopRenderer(void)
+ChipmunkDemoTextPopRenderer()
 {
 	triangle_count = pushed_triangle_count;
 }

@@ -93,7 +93,7 @@ add_box(cpSpace *space)
 }
 
 static cpSpace *
-init(void)
+init()
 {
 	// Create a rouge body_ to control the planet manually.
 	cpSpace *space = cpSpaceNew();

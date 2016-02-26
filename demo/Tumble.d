@@ -64,7 +64,7 @@ AddCircle(cpSpace *space, cpVect pos, cpFloat mass, cpFloat radius)
 }
 
 static cpSpace *
-init(void)
+init()
 {
 	cpSpace *space = cpSpaceNew();
 	cpSpaceSetGravity(space, cpv(0, -600));
