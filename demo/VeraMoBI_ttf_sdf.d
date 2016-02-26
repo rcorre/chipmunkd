@@ -1,3 +1,4 @@
+module VeraMoBI_ttf_sdf;
 /*
     Jonathan "lonesock" Dummer
     Signed Distance Font Tool
@@ -6,8 +7,6 @@
     font: "Bitstream Vera Sans Mono"
 */
 
-#ifndef HEADER_SIGNED_DISTANCE_FONT_XXX
-#define HEADER_SIGNED_DISTANCE_FONT_XXX
 
 /* array size information */
 const int sdf_tex_width = 128;
@@ -33,7 +32,7 @@ const int sdf_num_chars = 95;
     [7] X Advance * scale_factor | advance the cursor by this.
 */
 const float scale_factor = 1000.000000;
-const int sdf_spacing[] = {
+const int sdf_spacing[] = [
   32,17,105,4,4,-1500,1500,8437,
   33,120,42,7,14,750,11750,8437,
   34,43,0,9,7,62,11750,8437,
@@ -130,10 +129,10 @@ const int sdf_spacing[] = {
   125,11,14,11,17,-1750,12187,8437,
   126,32,0,11,6,-937,7125,8437,
   0
-};
+];
 
 /* Signed Distance Field: edges are at 127.5 */
-const unsigned char sdf_data[] = {
+const char[] sdf_data = [
   0,0,0,0,0,0,8,32,32,32,15,0,0,0,21,32,32,30,0,0,28,32,32,29,0,0,0,15,
   32,32,32,17,0,0,13,27,28,17,0,0,19,26,0,0,27,32,32,19,32,32,30,0,0,27,
   32,32,32,32,32,32,32,32,32,8,0,0,10,32,32,32,19,0,15,32,32,32,32,32,17,
@@ -810,6 +809,4 @@ const unsigned char sdf_data[] = {
   0,0,0,0,0,0,0,0,0,19,71,84,84,73,22,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
   255
-};
-
-#endif /* HEADER_SIGNED_DISTANCE_FONT_XXX */
+];

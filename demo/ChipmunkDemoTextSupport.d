@@ -29,7 +29,7 @@ import ChipmunkDemo;
 import ChipmunkDemoShaderSupport;
 import ChipmunkDemoTextSupport;
 
-import VeraMoBd.ttf_sdf;
+import VeraMoBd_ttf_sdf;
 
 //#define Scale 3.0f
 enum Scale = 0.70f;
