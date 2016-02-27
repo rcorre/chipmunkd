@@ -3,6 +3,7 @@ import chipmunk.chipmunk_unsafe;
 import ChipmunkDemo;
 
 import core.stdc.math;
+import core.stdc.stdlib;
 
 version (ENABLE_HASTY) {
 	import chipmunk.cpHastySpace;
@@ -71,10 +72,10 @@ static void add_hexagon(cpSpace *space, int index, cpFloat radius){
 	}
 	
 	cpFloat mass = radius*radius;
-	cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForPoly(mass, 6, hexagon, cpvzero, 0.0f)));
+	cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForPoly(mass, 6, hexagon.ptr, cpvzero, 0.0f)));
 	cpBodySetPosition(body_, cpvmult(frand_unit_circle(), 180.0f));
 	
-	cpShape *shape = cpSpaceAddShape(space, cpPolyShapeNew(body_, 6, hexagon, cpTransformIdentity, bevel));
+	cpShape *shape = cpSpaceAddShape(space, cpPolyShapeNew(body_, 6, hexagon.ptr, cpTransformIdentity, bevel));
 	cpShapeSetElasticity(shape, 0.0); cpShapeSetFriction(shape, 0.9);
 }
 
@@ -213,7 +214,7 @@ static cpVect complex_terrain_verts[] = [
 	{588.75, 324.00}, {583.25, 350.00}, {572.12, 370.00}, {575.45, 378.00}, {575.20, 388.00}, {589.00, 393.81}, {599.20, 404.00}, {607.14, 416.00}, {609.96, 430.00}, {615.45, 441.00}, {613.44, 462.00}, {610.48, 469.00},
 	{603.00, 475.63}, {590.96, 479.00}, 
 ];
-static int complex_terrain_count() { return complex_terrain_verts.length; }
+static auto complex_terrain_count() { return complex_terrain_verts.length; }
 
 static cpSpace *init_ComplexTerrainCircles_1000(){
 	cpSpace *space = BENCH_SPACE_NEW();
@@ -261,10 +262,10 @@ static cpSpace *init_ComplexTerrainHexagons_1000(){
 	
 	for(int i=0; i<1000; i++){
 		cpFloat mass = radius*radius;
-		cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForPoly(mass, 6, hexagon, cpvzero, 0.0f)));
+		cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForPoly(mass, 6, hexagon.ptr, cpvzero, 0.0f)));
 		cpBodySetPosition(body_, cpvadd(cpvmult(frand_unit_circle(), 180.0f), cpv(0.0f, 300.0f)));
 		
-		cpShape *shape = cpSpaceAddShape(space, cpPolyShapeNew(body_, 6, hexagon, cpTransformIdentity, bevel));
+		cpShape *shape = cpSpaceAddShape(space, cpPolyShapeNew(body_, 6, hexagon.ptr, cpTransformIdentity, bevel));
 		cpShapeSetElasticity(shape, 0.0); cpShapeSetFriction(shape, 0.0);
 	}
 	
@@ -318,7 +319,7 @@ static cpVect bouncy_terrain_verts[] = [
 	{456.00,  98.73}, {462.00,  95.48}, {472.00,  95.79}, {471.28,  92.00}, {464.00,  84.62}, {445.00,  80.39}, {436.00,  75.33}, {428.00,  68.46}, {419.00,  68.52}, {413.00,  65.27}, {408.48,  58.00}, {409.87,  46.00},
 	{404.42,  39.00}, {408.00,  33.88}, {415.00,  29.31}, {429.00,  26.45}, {455.00,  28.77}, {470.00,  33.81}, {482.00,  42.16}, {494.00,  46.85}, {499.65,  36.00}, {513.00,  25.95}, {529.00,  22.42}, {537.18,  23.00}, 
 ];
-static int bouncy_terrain_count() { return bouncy_terrain_verts.length; }
+static auto bouncy_terrain_count() { return bouncy_terrain_verts.length; }
 
 static cpSpace *init_BouncyTerrainCircles_500(){
 	cpSpace *space = BENCH_SPACE_NEW();
@@ -379,9 +380,8 @@ static cpSpace *init_BouncyTerrainHexagons_500(){
 
 // No collisions
 
-static cpBool NoCollide_begin(cpArbiter *arb, cpSpace *space, void *data){
+extern(C) static cpBool NoCollide_begin(cpArbiter *arb, cpSpace *space, void *data){
 	abort();
-	
 	return cpTrue;
 }
 
@@ -391,7 +391,7 @@ static cpSpace *init_NoCollide(){
 	cpSpaceSetIterations(space, 10);
 	
 	cpCollisionHandler *handler = cpSpaceAddCollisionHandler(space, 2, 2);
-	handler.beginFunc = NoCollide_begin;
+	handler.beginFunc = &NoCollide_begin;
 	
 	
 	float radius = 4.5f;
@@ -488,4 +488,4 @@ ChipmunkDemo bench_list[] = [
 	BENCH!("NoCollide"),
 ];
 
-int bench_count() { return bench_list.length; }
+auto bench_count() { return bench_list.length; }

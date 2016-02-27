@@ -21,6 +21,7 @@
 
 import core.stdc.limits;
 import core.stdc.string;
+import core.stdc.stdlib;
 
 import GL.glew;
 import GL.glfw;
@@ -45,8 +46,11 @@ float ChipmunkDebugDrawOutlineWidth = 1.0f;
 
 static GLuint program;
 
-struct v2f {GLfloat x, y;};
+struct v2f {
+	GLfloat x, y;
+};
 static v2f v2f0 = {0.0f, 0.0f};
+auto to_v2f(cpVect v) { return v2f(v.x, v.y); }
 
 struct Vertex {v2f vertex, aa_coord; cpSpaceDebugColor fill_color, outline_color;}
 struct Triangle {Vertex a, b, c;}
@@ -130,11 +134,16 @@ else {
 	
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+	SetAttribute(program, "vertex", Vertex.vertex.sizeof / GL_FLOAT.sizeof, GL_FLOAT,
+				 Vertex.sizeof, cast(GLvoid*)Vertex.vertex.offsetof);
+	SetAttribute(program, "aa_coord", Vertex.aa_coord.sizeof / GL_FLOAT.sizeof, GL_FLOAT,
+				 Vertex.sizeof, cast(GLvoid*)Vertex.aa_coord.offsetof);
+	SetAttribute(program, "fill_color", Vertex.fill_color.sizeof / GL_FLOAT.sizeof, GL_FLOAT,
+				 Vertex.sizeof, cast(GLvoid*)Vertex.fill_color.offsetof);
+	SetAttribute(program, "outline_color", Vertex.outline_color.sizeof / GL_FLOAT.sizeof, GL_FLOAT,
+				 Vertex.sizeof, cast(GLvoid*)Vertex.outline_color.offsetof);
 	
-	SET_ATTRIBUTE(program, Vertex, vertex, GL_FLOAT);
-	SET_ATTRIBUTE(program, Vertex, aa_coord, GL_FLOAT);
-	SET_ATTRIBUTE(program, Vertex, fill_color, GL_FLOAT);
-	SET_ATTRIBUTE(program, Vertex, outline_color, GL_FLOAT);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 version(OSX)
@@ -156,7 +165,7 @@ static Triangle *PushTriangles(GLsizei count)
 {
 	if(triangle_count + count > triangle_capacity){
 		triangle_capacity += MAX(triangle_capacity, count);
-		triangle_buffer = cast(Triangle *)realloc(triangle_buffer, triangle_capacity*sizeof(Triangle));
+		triangle_buffer = cast(Triangle *)realloc(triangle_buffer, triangle_capacity*Triangle.sizeof);
 	}
 	
 	Triangle *buffer = triangle_buffer + triangle_count;
@@ -202,14 +211,14 @@ void ChipmunkDebugDrawFatSegment(cpVect a, cpVect b, cpFloat radius, cpSpaceDebu
 	
 	cpVect nw = (cpvmult(n, r));
 	cpVect tw = (cpvmult(t, r));
-	v2f v0 = v2f(cpvsub(b, cpvadd(nw, tw))); // { 1.0, -1.0}
-	v2f v1 = v2f(cpvadd(b, cpvsub(nw, tw))); // { 1.0,  1.0}
-	v2f v2 = v2f(cpvsub(b, nw)); // { 0.0, -1.0}
-	v2f v3 = v2f(cpvadd(b, nw)); // { 0.0,  1.0}
-	v2f v4 = v2f(cpvsub(a, nw)); // { 0.0, -1.0}
-	v2f v5 = v2f(cpvadd(a, nw)); // { 0.0,  1.0}
-	v2f v6 = v2f(cpvsub(a, cpvsub(nw, tw))); // {-1.0, -1.0}
-	v2f v7 = v2f(cpvadd(a, cpvadd(nw, tw))); // {-1.0,  1.0}
+	v2f v0 = to_v2f(cpvsub(b, cpvadd(nw, tw))); // { 1.0, -1.0}
+	v2f v1 = to_v2f(cpvadd(b, cpvsub(nw, tw))); // { 1.0,  1.0}
+	v2f v2 = to_v2f(cpvsub(b, nw)); // { 0.0, -1.0}
+	v2f v3 = to_v2f(cpvadd(b, nw)); // { 0.0,  1.0}
+	v2f v4 = to_v2f(cpvsub(a, nw)); // { 0.0, -1.0}
+	v2f v5 = to_v2f(cpvadd(a, nw)); // { 0.0,  1.0}
+	v2f v6 = to_v2f(cpvsub(a, cpvsub(nw, tw))); // {-1.0, -1.0}
+	v2f v7 = to_v2f(cpvadd(a, cpvadd(nw, tw))); // {-1.0,  1.0}
 	
 	Triangle t0 = {{v0, { 1.0f, -1.0f}, fillColor, outlineColor}, {v1, { 1.0f,  1.0f}, fillColor, outlineColor}, {v2, { 0.0f, -1.0f}, fillColor, outlineColor}}; triangles[0] = t0;
 	Triangle t1 = {{v3, { 0.0f,  1.0f}, fillColor, outlineColor}, {v1, { 1.0f,  1.0f}, fillColor, outlineColor}, {v2, { 0.0f, -1.0f}, fillColor, outlineColor}}; triangles[1] = t1;
@@ -224,7 +233,7 @@ extern cpVect ChipmunkDemoMouse;
 void ChipmunkDebugDrawPolygon(int count, const cpVect *verts, cpFloat radius, cpSpaceDebugColor outlineColor, cpSpaceDebugColor fillColor)
 {
 	struct ExtrudeVerts {cpVect offset, n;};
-	size_t bytes = sizeof(ExtrudeVerts)*count;
+	size_t bytes = (ExtrudeVerts.sizeof)*count;
 	ExtrudeVerts *extrude = cast(ExtrudeVerts *)alloca(bytes);
 	memset(extrude, 0, bytes);
 	
@@ -246,9 +255,9 @@ void ChipmunkDebugDrawPolygon(int count, const cpVect *verts, cpFloat radius, cp
 	
 	cpFloat inset = -cpfmax(0.0f, 1.0f/ChipmunkDebugDrawPointLineScale - radius);
 	for(int i=0; i<count-2; i++){
-		v2f v0 = v2f(cpvadd(verts[  0], cpvmult(extrude[  0].offset, inset)));
-		v2f v1 = v2f(cpvadd(verts[i+1], cpvmult(extrude[i+1].offset, inset)));
-		v2f v2 = v2f(cpvadd(verts[i+2], cpvmult(extrude[i+2].offset, inset)));
+		v2f v0 = to_v2f(cpvadd(verts[  0], cpvmult(extrude[  0].offset, inset)));
+		v2f v1 = to_v2f(cpvadd(verts[i+1], cpvmult(extrude[i+1].offset, inset)));
+		v2f v2 = to_v2f(cpvadd(verts[i+2], cpvmult(extrude[i+2].offset, inset)));
 		
 		Triangle t = {{v0, v2f0, fillColor, fillColor}, {v1, v2f0, fillColor, fillColor}, {v2, v2f0, fillColor, fillColor}}; *cursor++ = t;
 	}
@@ -268,16 +277,16 @@ void ChipmunkDebugDrawPolygon(int count, const cpVect *verts, cpFloat radius, cp
 		cpVect innerB = cpvadd(vB, cpvmult(offsetB, inset));
 		
 		// Admittedly my variable naming sucks here...
-		v2f inner0 = v2f(innerA);
-		v2f inner1 = v2f(innerB);
-		v2f outer0 = v2f(cpvadd(innerA, cpvmult(nB, outset)));
-		v2f outer1 = v2f(cpvadd(innerB, cpvmult(nB, outset)));
-		v2f outer2 = v2f(cpvadd(innerA, cpvmult(offsetA, outset)));
-		v2f outer3 = v2f(cpvadd(innerA, cpvmult(nA, outset)));
+		v2f inner0 = to_v2f(innerA);
+		v2f inner1 = to_v2f(innerB);
+		v2f outer0 = to_v2f(cpvadd(innerA, cpvmult(nB, outset)));
+		v2f outer1 = to_v2f(cpvadd(innerB, cpvmult(nB, outset)));
+		v2f outer2 = to_v2f(cpvadd(innerA, cpvmult(offsetA, outset)));
+		v2f outer3 = to_v2f(cpvadd(innerA, cpvmult(nA, outset)));
 		
-		v2f n0 = v2f(nA);
-		v2f n1 = v2f(nB);
-		v2f offset0 = v2f(offsetA);
+		v2f n0 = to_v2f(nA);
+		v2f n1 = to_v2f(nB);
+		v2f offset0 = to_v2f(offsetA);
 		
 		Triangle t0 = {{inner0, v2f0, fillColor, outlineColor}, {inner1,    v2f0, fillColor, outlineColor}, {outer1,      n1, fillColor, outlineColor}}; *cursor++ = t0;
 		Triangle t1 = {{inner0, v2f0, fillColor, outlineColor}, {outer0,      n1, fillColor, outlineColor}, {outer1,      n1, fillColor, outlineColor}}; *cursor++ = t1;
@@ -302,13 +311,13 @@ void ChipmunkDebugDrawDot(cpFloat size, cpVect pos, cpSpaceDebugColor fillColor)
 
 void ChipmunkDebugDrawBB(cpBB bb, cpSpaceDebugColor color)
 {
-	cpVect verts[] = {
+	cpVect verts[] = [
 		cpv(bb.r, bb.b),
 		cpv(bb.r, bb.t),
 		cpv(bb.l, bb.t),
 		cpv(bb.l, bb.b),
-	};
-	ChipmunkDebugDrawPolygon(4, verts, 0.0f, color, LAColor(0, 0));
+	];
+	ChipmunkDebugDrawPolygon(4, verts.ptr, 0.0f, color, LAColor(0, 0));
 }
 
 void

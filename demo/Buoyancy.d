@@ -22,6 +22,7 @@
 import chipmunk;
 
 import ChipmunkDemo;
+import ChipmunkDebugDraw;
 
 static void
 update(cpSpace *space, double dt)
@@ -39,13 +40,14 @@ static cpFloat
 k_scalar_body(cpBody *body_, cpVect point, cpVect n)
 {
 	cpFloat rcn = cpvcross(cpvsub(point, cpBodyGetPosition(body_)), n);
-	return 1.0f/cpBodyGetMass(_body) + rcn*rcn/cpBodyGetMoment(body_);
+	return 1.0f/cpBodyGetMass(body_) + rcn*rcn/cpBodyGetMoment(body_);
 }
 
 static cpBool
 waterPreSolve(cpArbiter *arb, cpSpace *space, void *ptr)
 {
-	CP_ARBITER_GET_SHAPES(arb, water, poly);
+	cpShape* water, poly;
+	cpArbiterGetShapes(arb, &water, &poly);
 	cpBody *body_ = cpShapeGetBody(poly);
 	
 	// Get the top of the water sensor bounding box to use as the water level.
@@ -58,7 +60,7 @@ version (_MSC_VER)
 	// MSVC is pretty much the only compiler in existence that doesn't support variable sized arrays.
 	cpVect clipped[10];
 else
-	cpVect clipped[count + 1];
+	cpVect[] clipped = new cpVect[count + 1];
 
 	for(int i=0, j=count-1; i<count; j=i, i++){
 		cpVect a = cpBodyLocalToWorld(body_, cpPolyShapeGetVert(poly, j));
@@ -81,11 +83,11 @@ else
 	}
 	
 	// Calculate buoyancy from the clipped polygon area
-	cpFloat clippedArea = cpAreaForPoly(clippedCount, clipped, 0.0f);
+	cpFloat clippedArea = cpAreaForPoly(clippedCount, clipped.ptr, 0.0f);
 	cpFloat displacedMass = clippedArea*FLUID_DENSITY;
-	cpVect centroid = cpCentroidForPoly(clippedCount, clipped);
+	cpVect centroid = cpCentroidForPoly(clippedCount, clipped.ptr);
 	
-	ChipmunkDebugDrawPolygon(clippedCount, clipped, 0.0f, RGBAColor(0, 0, 1, 1), RGBAColor(0, 0, 1, 0.1f));
+	ChipmunkDebugDrawPolygon(clippedCount, clipped.ptr, 0.0f, RGBAColor(0, 0, 1, 1), RGBAColor(0, 0, 1, 0.1f));
 	ChipmunkDebugDrawDot(5, centroid, RGBAColor(0, 0, 1, 1));
 	
 	cpFloat dt = cpSpaceGetCurrentTimeStep(space);
@@ -104,7 +106,7 @@ else
 	
 	// Apply angular damping for the fluid drag.
 	cpVect cog = cpBodyLocalToWorld(body_, cpBodyGetCenterOfGravity(body_));
-	cpFloat w_damping = cpMomentForPoly(FLUID_DRAG*FLUID_DENSITY*clippedArea, clippedCount, clipped, cpvneg(cog), 0.0f);
+	cpFloat w_damping = cpMomentForPoly(FLUID_DRAG*FLUID_DENSITY*clippedArea, clippedCount, clipped.ptr, cpvneg(cog), 0.0f);
 	cpBodySetAngularVelocity(body_, cpBodyGetAngularVelocity(body_)*cpfexp(-w_damping*dt/cpBodyGetMoment(body_)));
 	
 	return cpTrue;
@@ -113,7 +115,7 @@ else
 static cpSpace *
 init()
 {
-	ChipmunkDemoMessageString = messageBuffer;
+	ChipmunkDemoMessageString = messageBuffer.ptr;
 	
 	cpSpace *space = cpSpaceNew();
 	cpSpaceSetIterations(space, 30);
@@ -204,7 +206,7 @@ init()
 	}
 	
 	cpCollisionHandler *handler = cpSpaceAddCollisionHandler(space, 1, 0);
-	handler.preSolveFunc = cast(cpCollisionPreSolveFunc)waterPreSolve;
+	handler.preSolveFunc = cast(cpCollisionPreSolveFunc)&waterPreSolve;
 		
 	return space;
 }

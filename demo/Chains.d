@@ -25,14 +25,14 @@ import ChipmunkDemo;
 enum CHAIN_COUNT = 8;
 enum LINK_COUNT = 10;
 
-static void
+extern(C) static void
 BreakablejointPostStepRemove(cpSpace *space, cpConstraint *joint, void *unused)
 {
 	cpSpaceRemoveConstraint(space, joint);
 	cpConstraintFree(joint);
 }
 
-static void
+extern(C) static void
 BreakableJointPostSolve(cpConstraint *joint, cpSpace *space)
 {
 	cpFloat dt = cpSpaceGetCurrentTimeStep(space);
@@ -43,7 +43,7 @@ BreakableJointPostSolve(cpConstraint *joint, cpSpace *space)
 
 	// If the force is almost as big as the joint's max force, break it.
 	if(force > 0.9*maxForce){
-		cpSpaceAddPostStepCallback(space, cast(cpPostStepFunc)BreakablejointPostStepRemove, joint, null);
+		cpSpaceAddPostStepCallback(space, cast(cpPostStepFunc)&BreakablejointPostStepRemove, joint, null);
 	}
 }
 
@@ -114,7 +114,7 @@ init()
 			}
 			
 			cpConstraintSetMaxForce(constraint, breakingForce);
-			cpConstraintSetPostSolveFunc(constraint, BreakableJointPostSolve);
+			cpConstraintSetPostSolveFunc(constraint, &BreakableJointPostSolve);
 			cpConstraintSetCollideBodies(constraint, cpFalse);
 			
 			prev = body_;
