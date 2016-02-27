@@ -33,7 +33,7 @@ static void
 update(cpSpace *space, cpFloat dt)
 {
 	int steps = 1;
-	cpFloat dt = 1.0f/60.0f/cast(cpFloat)steps;
+	dt = 1.0f/60.0f/cast(cpFloat)steps;
 	
 	for(int i=0; i<steps; i++){
 		cpSpaceStep(space, dt);

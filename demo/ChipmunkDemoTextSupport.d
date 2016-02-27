@@ -20,12 +20,14 @@
  */
 
 import core.stdc.string;
+import core.stdc.stdlib;
 
 import GL.glew;
 import GL.glfw;
 
 import chipmunk.chipmunk_private;
 import ChipmunkDemo;
+import ChipmunkDebugDraw;
 import ChipmunkDemoShaderSupport;
 import ChipmunkDemoTextSupport;
 
@@ -113,9 +115,9 @@ else {
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	
-	SET_ATTRIBUTE(program, Vertex, vertex, GL_FLOAT);
-	SET_ATTRIBUTE(program, Vertex, tex_coord, GL_FLOAT);
-	SET_ATTRIBUTE(program, Vertex, color, GL_FLOAT);
+	mixin(SET_ATTRIBUTE!("program", "Vertex", "vertex", "GL_FLOAT"));
+	mixin(SET_ATTRIBUTE!("program", "Vertex", "tex_coord", "GL_FLOAT"));
+	mixin(SET_ATTRIBUTE!("program", "Vertex", "color", "GL_FLOAT"));
 	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 version(OSX)
@@ -128,7 +130,8 @@ else
 	// Load the SDF font texture.
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, sdf_tex_width, sdf_tex_height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, sdf_data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, sdf_tex_width, sdf_tex_height, 0, GL_ALPHA,
+				 GL_UNSIGNED_BYTE, sdf_data.ptr);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -154,7 +157,7 @@ static Triangle *PushTriangles(GLsizei count)
 {
 	if(triangle_count + count > triangle_capacity){
 		triangle_capacity += MAX(triangle_capacity, count);
-		triangle_buffer = cast(Triangle *)realloc(triangle_buffer, triangle_capacity*sizeof(Triangle));
+		triangle_buffer = cast(Triangle *)realloc(triangle_buffer, triangle_capacity*Triangle.sizeof);
 	}
 	
 	Triangle *buffer = triangle_buffer + triangle_count;
@@ -220,7 +223,7 @@ ChipmunkDemoTextFlushRenderer()
 //	ChipmunkDemoTextDrawString(cpv(-300, 0), "0.:,'");
 	
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Triangle)*triangle_count, triangle_buffer, GL_STREAM_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, Triangle.sizeof*triangle_count, triangle_buffer, GL_STREAM_DRAW);
 	
 	glUseProgram(program);
 	

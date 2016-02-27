@@ -33,7 +33,7 @@ ClipPoly(cpSpace *space, cpShape *shape, cpVect n, cpFloat dist)
 	int count = cpPolyShapeGetCount(shape);
 	int clippedCount = 0;
 	
-	cpVect *clipped = cast(cpVect *)alloca((count + 1)*sizeof(cpVect));
+	cpVect *clipped = cast(cpVect *)alloca((count + 1)*cpVect.sizeof);
 	
 	for(int i=0, j=count-1; i<count; j=i, i++){
 		cpVect a = cpBodyLocalToWorld(body_, cpPolyShapeGetVert(shape, j));

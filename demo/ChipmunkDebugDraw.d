@@ -324,7 +324,7 @@ void
 ChipmunkDebugDrawFlushRenderer()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Triangle)*triangle_count, triangle_buffer, GL_STREAM_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, Triangle.sizeof*triangle_count, triangle_buffer, GL_STREAM_DRAW);
 	
 	glUseProgram(program);
 	glUniform1f(glGetUniformLocation(program, "u_outline_coef"), ChipmunkDebugDrawPointLineScale);

@@ -39,7 +39,8 @@ BallIterator(cpBody *body_, cpArbiter *arb, int *count)
 {
 	// body_ is the body_ we are iterating the arbiters for.
 	// CP_ARBITER_GET_*() in an arbiter iterator always returns the body_/shape for the iterated body_ first.
-	CP_ARBITER_GET_SHAPES(arb, ball, other);
+	cpShape* ball, other; 
+	cpArbiterGetShapes(arb, &ball, &other);
 	ChipmunkDebugDrawBB(cpShapeGetBB(other), RGBAColor(1, 0, 0, 1));
 	
 	(*count)++;
@@ -69,7 +70,7 @@ update(cpSpace *space, double dt)
 	// If your compiler supports blocks, your life is a little easier.
 	// You can use the "Block" versions of the functions without needing the callbacks above.
     cpVect impulseSum = cpvzero;
-    cpBodyEachArbiter(scaleStaticBody, cast(cpBodyArbiterIteratorFunc)ScaleIterator, &impulseSum);
+    cpBodyEachArbiter(scaleStaticBody, cast(cpBodyArbiterIteratorFunc)&ScaleIterator, &impulseSum);
 	
 	// Force is the impulse divided by the timestep.
 	cpFloat force = cpvlength(impulseSum)/dt;
@@ -83,12 +84,12 @@ update(cpSpace *space, double dt)
 	
 	// Highlight and count the number of shapes the ball is touching.
     int count = 0;
-    cpBodyEachArbiter(ballBody, cast(cpBodyArbiterIteratorFunc)BallIterator, &count);
+    cpBodyEachArbiter(ballBody, cast(cpBodyArbiterIteratorFunc)&BallIterator, &count);
 	
 	ChipmunkDemoPrintString("The ball is touching %d shapes.\n", count);
 
     CrushingContext crush = {0.0f, cpvzero};
-    cpBodyEachArbiter(ballBody, cast(cpBodyArbiterIteratorFunc)EstimateCrushing, &crush);
+    cpBodyEachArbiter(ballBody, cast(cpBodyArbiterIteratorFunc)&EstimateCrushing, &crush);
 
     cpFloat crushForce = (crush.magnitudeSum - cpvlength(crush.vectorSum))*dt;
 	

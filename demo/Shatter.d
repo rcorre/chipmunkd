@@ -74,7 +74,7 @@ ClipCell(cpShape *shape, cpVect center, int i, int j, WorleyContex *context, cpV
 //	printf("  other %dx%d: (% 5.2f, % 5.2f) ", i, j, other.x, other.y);
 	if(cpShapePointQuery(shape, other, null) > 0.0f){
 //		printf("excluded\n");
-		memcpy(clipped, verts, count*sizeof(cpVect));
+		memcpy(clipped, verts, count*cpVect.sizeof);
 		return count;
 	} else {
 //		printf("clipped\n");
@@ -114,8 +114,8 @@ ShatterCell(cpSpace *space, cpShape *shape, cpVect cell, int cell_i, int cell_j,
 
 	cpBody *body_ = cpShapeGetBody(shape);
 
-	cpVect *ping = cast(cpVect *)alloca(MAX_VERTEXES_PER_VORONOI*sizeof(cpVect));
-	cpVect *pong = cast(cpVect *)alloca(MAX_VERTEXES_PER_VORONOI*sizeof(cpVect));
+	cpVect *ping = cast(cpVect *)alloca(MAX_VERTEXES_PER_VORONOI*cpVect.sizeof);
+	cpVect *pong = cast(cpVect *)alloca(MAX_VERTEXES_PER_VORONOI*cpVect.sizeof);
 
 	int count = cpPolyShapeGetCount(shape);
 	count = (count > MAX_VERTEXES_PER_VORONOI ? MAX_VERTEXES_PER_VORONOI : count);
@@ -131,7 +131,7 @@ ShatterCell(cpSpace *space, cpShape *shape, cpVect cell, int cell_i, int cell_j,
 				cpShapePointQuery(shape, cell, null) < 0.0f
 			){
 				count = ClipCell(shape, cell, i, j, context, ping, pong, count);
-				memcpy(ping, pong, count*sizeof(cpVect));
+				memcpy(ping, pong, count*cpVect.sizeof);
 			}
 		}
 	}

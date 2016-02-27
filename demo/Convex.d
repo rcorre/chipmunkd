@@ -38,7 +38,7 @@ update(cpSpace *space, double dt)
 		int count = cpPolyShapeGetCount(shape);
 		
 		// Allocate the space for the new vertexes on the stack.
-		cpVect *verts = cast(cpVect *)alloca((count + 1)*sizeof(cpVect));
+		cpVect *verts = cast(cpVect *)alloca((count + 1)*cpVect.sizeof);
 		
 		for(int i=0; i<count; i++){
 			verts[i] = cpPolyShapeGetVert(shape, i);

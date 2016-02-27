@@ -45,7 +45,7 @@ import GL.glfw;
 
 public import chipmunk;
 import chipmunk.chipmunk_private;
-import ChipmunkDebugDraw;
+public import ChipmunkDebugDraw;
 import ChipmunkDemoTextSupport;
 
 alias ChipmunkDemoInitFunc = cpSpace* function();

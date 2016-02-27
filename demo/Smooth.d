@@ -110,7 +110,7 @@ init()
 		cpv( 200, -100),
 		cpv( 320, -200),
 	};
-	int terrainCount = sizeof(terrain)/sizeof(*terrain);
+	int terrainCount = terrain.sizeof/sizeof(*terrain);
 	
 	for(int i=1; i<5; i++){
 		cpVect v0 = terrain[MAX(i-2, 0)];
