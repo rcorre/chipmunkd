@@ -143,8 +143,8 @@ destroy(cpSpace *space)
 ChipmunkDemo Chains = {
 	"Breakable Chains",
 	1.0/180.0,
-	init,
-	update,
-	ChipmunkDemoDefaultDrawImpl,
-	destroy,
+	&init,
+	&update,
+	&ChipmunkDemoDefaultDrawImpl,
+	&destroy,
 };

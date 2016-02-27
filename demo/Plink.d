@@ -43,12 +43,12 @@ update(cpSpace *space, double dt)
 		cpShape *nearest = cpSpacePointQueryNearest(space, ChipmunkDemoMouse, 0.0, GRAB_FILTER, null);
 		if(nearest){
 			cpBody *body_ = cpShapeGetBody(nearest);
-			if(cpBodyGetType(body_) == CP_BODY_TYPE_STATIC){
-				cpBodySetType(body_, CP_BODY_TYPE_DYNAMIC);
+			if(cpBodyGetType(body_) == cpBodyType.CP_BODY_TYPE_STATIC){
+				cpBodySetType(body_, cpBodyType.CP_BODY_TYPE_DYNAMIC);
 				cpBodySetMass(body_, pentagon_mass);
 				cpBodySetMoment(body_, pentagon_moment);
-			} else if(cpBodyGetType(body_) == CP_BODY_TYPE_DYNAMIC) {
-				cpBodySetType(body_, CP_BODY_TYPE_STATIC);
+			} else if(cpBodyGetType(body_) == cpBodyType.CP_BODY_TYPE_DYNAMIC) {
+				cpBodySetType(body_, cpBodyType.CP_BODY_TYPE_STATIC);
 			}
 		}
 	}
@@ -124,8 +124,8 @@ destroy(cpSpace *space)
 ChipmunkDemo Plink = {
 	"Plink",
 	1.0/60.0,
-	init,
-	update,
-	ChipmunkDemoDefaultDrawImpl,
-	destroy,
+	&init,
+	&update,
+	&ChipmunkDemoDefaultDrawImpl,
+	&destroy,
 };

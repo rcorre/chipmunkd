@@ -136,8 +136,8 @@ destroy(cpSpace *space)
 ChipmunkDemo Tumble = {
 	"Tumble",
 	1.0/180.0,
-	init,
-	update,
-	ChipmunkDemoDefaultDrawImpl,
-	destroy,
+	&init,
+	&update,
+	&ChipmunkDemoDefaultDrawImpl,
+	&destroy,
 };

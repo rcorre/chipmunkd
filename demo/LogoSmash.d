@@ -26,7 +26,7 @@ static const int image_width = 188;
 static const int image_height = 35;
 static const int image_row_length = 24;
 
-static const byte image_bitmap[] = {
+static const byte image_bitmap[] = [
 	15,-16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,-64,15,63,-32,-2,0,0,0,0,0,0,0,
 	0,0,0,0,0,0,0,0,0,0,0,31,-64,15,127,-125,-1,-128,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	0,0,0,127,-64,15,127,15,-1,-64,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,-64,15,-2,
@@ -60,37 +60,37 @@ static const byte image_bitmap[] = {
 	-97,-25,-8,0,63,-61,-61,-4,127,-1,-29,-4,127,-64,15,-8,0,0,55,-1,-1,-121,-8,
 	127,-97,-25,-8,0,63,-61,-61,-4,127,-1,-29,-4,63,-64,15,-32,0,0,23,-1,-2,3,-16,
 	63,15,-61,-16,0,31,-127,-127,-8,31,-1,-127,-8,31,-128,7,-128,0,0
-};
+	];
 
-static int
+	static int
 get_pixel(int x, int y)
 {
 	return (image_bitmap[(x>>3) + y*image_row_length]>>(~x&0x7)) & 1;
 }
 
-static int body_Count = 0;
+static int bodyCount = 0;
 
-static void
+	static void
 update(cpSpace *space, double dt)
 {
 	cpSpaceStep(space, dt);
 }
 
-static void
+	static void
 DrawDot(cpBody *body_, void *unused)
 {
 	ChipmunkDebugDrawDot(3.0, cpBodyGetPosition(body_), RGBAColor(200.0f/255.0f, 210.0f/255.0f, 230.0f/255.0f, 1.0f));
 }
 
-static void
+	static void
 draw(cpSpace *space)
 {
 	cpSpaceEachBody(space, DrawDot, null);
-	
-//	ChipmunkDebugDrawCollisionPoints(space);
+
+	//	ChipmunkDebugDrawCollisionPoints(space);
 }
 
-static cpShape *
+	static cpShape *
 make_ball(cpFloat x, cpFloat y)
 {
 	cpBody *body_ = cpBodyNew(1.0, INFINITY);
@@ -99,41 +99,41 @@ make_ball(cpFloat x, cpFloat y)
 	cpShape *shape = cpCircleShapeNew(body_, 0.95, cpvzero);
 	cpShapeSetElasticity(shape, 0.0);
 	cpShapeSetFriction(shape, 0.0);
-	
+
 	return shape;
 }
 
-static cpSpace *
+	static cpSpace *
 init()
 {
 	cpSpace *space = cpSpaceNew();
 	cpSpaceSetIterations(space, 1);
-	
+
 	// The space will contain a very large number of similary sized objects.
 	// This is the perfect candidate for using the spatial hash.
 	// Generally you will never need to do this.
 	cpSpaceUseSpatialHash(space, 2.0, 10000);
-	
+
 	bodyCount = 0;
-	
+
 	cpBody *body_;
 	cpShape *shape;
-	
+
 	for(int y=0; y<image_height; y++){
 		for(int x=0; x<image_width; x++){
 			if(!get_pixel(x, y)) continue;
-			
+
 			cpFloat x_jitter = 0.05*frand();
 			cpFloat y_jitter = 0.05*frand();
-			
+
 			shape = make_ball(2*(x - image_width/2 + x_jitter), 2*(image_height/2 - y + y_jitter));
 			cpSpaceAddBody(space, cpShapeGetBody(shape));
 			cpSpaceAddShape(space, shape);
-			
+
 			bodyCount++;
 		}
 	}
-	
+
 	body_ = cpSpaceAddBody(space, cpBodyNew(1e9, INFINITY));
 	cpBodySetPosition(body_, cpv(-1000, -10));
 	cpBodySetVelocity(body_, cpv(400, 0));
@@ -142,13 +142,13 @@ init()
 	cpShapeSetElasticity(shape, 0.0);
 	cpShapeSetFriction(shape, 0.0);
 	cpShapeSetFilter(shape, NOT_GRABBABLE_FILTER);
-	
+
 	bodyCount++;
 
 	return space;
 }
 
-static void
+	static void
 destroy(cpSpace *space)
 {
 	ChipmunkDemoFreeSpaceChildren(space);
@@ -158,8 +158,8 @@ destroy(cpSpace *space)
 ChipmunkDemo LogoSmash = {
 	"Logo Smash",
 	1.0/60.0,
-	init,
-	update,
-	draw,
-	destroy,
+	&init,
+	&update,
+	&draw,
+	&destroy,
 };

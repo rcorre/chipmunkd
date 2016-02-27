@@ -25,9 +25,20 @@ import core.stdc.string;
 import GL.glew;
 import GL.glfw;
 
+import chipmunk;
 import chipmunk.chipmunk_private;
 import ChipmunkDebugDraw;
 import ChipmunkDemoShaderSupport;
+
+static cpSpaceDebugColor RGBAColor(float r, float g, float b, float a){
+	cpSpaceDebugColor color = {r, g, b, a};
+	return color;
+}
+
+static cpSpaceDebugColor LAColor(float l, float a){
+	cpSpaceDebugColor color = {l, l, l, a};
+	return color;
+}
 
 float ChipmunkDebugDrawPointLineScale = 1.0f;
 float ChipmunkDebugDrawOutlineWidth = 1.0f;
@@ -36,12 +47,6 @@ static GLuint program;
 
 struct v2f {GLfloat x, y;};
 static v2f v2f0 = {0.0f, 0.0f};
-
-v2f v2f(cpVect v)
-{
-	v2f v2 = {cast(GLfloat)v.x, cast(GLfloat)v.y};
-	return v2;
-}
 
 struct Vertex {v2f vertex, aa_coord; cpSpaceDebugColor fill_color, outline_color;}
 struct Triangle {Vertex a, b, c;}
@@ -53,27 +58,27 @@ void
 ChipmunkDebugDrawInit()
 {
 	// Setup the AA shader.
-	GLint vshader = CompileShader(GL_VERTEX_SHADER, GLSL(
+	GLint vshader = CompileShader(GL_VERTEX_SHADER, q{
 		attribute vec2 vertex;
 		attribute vec2 aa_coord;
 		attribute vec4 fill_color;
 		attribute vec4 outline_color;
-		
+
 		varying vec2 v_aa_coord;
 		varying vec4 v_fill_color;
 		varying vec4 v_outline_color;
-		
+
 		void main(){
 			// TODO: get rid of the GL 2.x matrix bit eventually?
 			gl_Position = gl_ModelViewProjectionMatrix*vec4(vertex, 0.0, 1.0);
-			
+
 			v_fill_color = fill_color;
 			v_outline_color = outline_color;
 			v_aa_coord = aa_coord;
 		}
-	));
+	});
 	
-	GLint fshader = CompileShader(GL_FRAGMENT_SHADER, GLSL(
+	GLint fshader = CompileShader(GL_FRAGMENT_SHADER, q{
 		uniform float u_outline_coef;
 		
 		varying vec2 v_aa_coord;
@@ -108,34 +113,34 @@ ChipmunkDebugDrawInit()
 			gl_FragColor = fo_color*(fo_color.a*alpha);
 			//gl_FragColor = vec4(vec3(l), 1);
 		}
-	));
+	});
 	
 	program = LinkProgram(vshader, fshader);
 	CHECK_GL_ERRORS();
 	
 	// Setu VBO and VAO.
-#if __APPLE__
+version(OSX) {
 	glGenVertexArraysAPPLE(1, &vao);
 	glBindVertexArrayAPPLE(vao);
-#else
+}
+else {
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
-#endif
+}
 	
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	
-	SET_ATTRIBUTE(program, struct Vertex, vertex, GL_FLOAT);
-	SET_ATTRIBUTE(program, struct Vertex, aa_coord, GL_FLOAT);
-	SET_ATTRIBUTE(program, struct Vertex, fill_color, GL_FLOAT);
-	SET_ATTRIBUTE(program, struct Vertex, outline_color, GL_FLOAT);
+	SET_ATTRIBUTE(program, Vertex, vertex, GL_FLOAT);
+	SET_ATTRIBUTE(program, Vertex, aa_coord, GL_FLOAT);
+	SET_ATTRIBUTE(program, Vertex, fill_color, GL_FLOAT);
+	SET_ATTRIBUTE(program, Vertex, outline_color, GL_FLOAT);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-#if __APPLE__
+version(OSX)
 	glBindVertexArrayAPPLE(0);
-#else
+else
 	glBindVertexArray(0);
-#endif
 
 	CHECK_GL_ERRORS();
 }
@@ -151,7 +156,7 @@ static Triangle *PushTriangles(GLsizei count)
 {
 	if(triangle_count + count > triangle_capacity){
 		triangle_capacity += MAX(triangle_capacity, count);
-		triangle_buffer = (Triangle *)realloc(triangle_buffer, triangle_capacity*sizeof(Triangle));
+		triangle_buffer = cast(Triangle *)realloc(triangle_buffer, triangle_capacity*sizeof(Triangle));
 	}
 	
 	Triangle *buffer = triangle_buffer + triangle_count;
@@ -220,7 +225,7 @@ void ChipmunkDebugDrawPolygon(int count, const cpVect *verts, cpFloat radius, cp
 {
 	struct ExtrudeVerts {cpVect offset, n;};
 	size_t bytes = sizeof(ExtrudeVerts)*count;
-	ExtrudeVerts *extrude = (ExtrudeVerts *)alloca(bytes);
+	ExtrudeVerts *extrude = cast(ExtrudeVerts *)alloca(bytes);
 	memset(extrude, 0, bytes);
 	
 	for(int i=0; i<count; i++){
@@ -315,11 +320,11 @@ ChipmunkDebugDrawFlushRenderer()
 	glUseProgram(program);
 	glUniform1f(glGetUniformLocation(program, "u_outline_coef"), ChipmunkDebugDrawPointLineScale);
 	
-#if __APPLE__
+version(OSX)
 	glBindVertexArrayAPPLE(vao);
-#else
+else
 	glBindVertexArray(vao);
-#endif
+
 	glDrawArrays(GL_TRIANGLES, 0, triangle_count*3);
 		
 	CHECK_GL_ERRORS();

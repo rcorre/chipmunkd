@@ -190,8 +190,8 @@ destroy(cpSpace *space)
 ChipmunkDemo Sticky = {
 	"Sticky Surfaces",
 	1.0/60.0,
-	init,
-	update,
-	ChipmunkDemoDefaultDrawImpl,
-	destroy,
+	&init,
+	&update,
+	&ChipmunkDemoDefaultDrawImpl,
+	&destroy,
 };

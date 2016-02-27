@@ -35,14 +35,46 @@ import core.stdc.stdio;
 import core.stdc.string;
 import core.stdc.limits;
 import core.stdc.stdarg;
+import core.stdc.stdlib;
 
+import std.string;
+
+import GL.glu;
 import GL.glew;
 import GL.glfw;
 
-import chipmunk;
+public import chipmunk;
 import chipmunk.chipmunk_private;
-import ChipmunkDemo;
+import ChipmunkDebugDraw;
 import ChipmunkDemoTextSupport;
+
+alias ChipmunkDemoInitFunc = cpSpace* function();
+alias ChipmunkDemoUpdateFunc = void function(cpSpace *space, double dt);
+alias ChipmunkDemoDrawFunc = void function(cpSpace *space);
+alias ChipmunkDemoDestroyFunc = void function(cpSpace *space);
+
+struct ChipmunkDemo {
+	const char *name;
+	double timestep;
+ 
+	ChipmunkDemoInitFunc initFunc;
+	ChipmunkDemoUpdateFunc updateFunc;
+	ChipmunkDemoDrawFunc drawFunc;
+	
+	ChipmunkDemoDestroyFunc destroyFunc;
+};
+
+static cpFloat frand()
+{
+    import std.random : uniform01;
+	return uniform01!cpFloat;
+}
+
+static cpVect frand_unit_circle()
+{
+	cpVect v = cpv(frand()*2.0f - 1.0f, frand()*2.0f - 1.0f);
+	return (cpvlengthsq(v) < 1.0f ? v : frand_unit_circle());
+}
 
 static ChipmunkDemo *demos;
 static int demo_count = 0;
@@ -66,7 +98,7 @@ cpVect ChipmunkDemoKeyboard = {};
 static cpBody *mouse_body = null;
 static cpConstraint *mouse_joint = null;
 
-const char *ChipmunkDemoMessageString = null;
+char* ChipmunkDemoMessageString = null;
 
 enum GRABBABLE_MASK_BIT = (1<<31);
 cpShapeFilter GRAB_FILTER = {CP_NO_GROUP, GRABBABLE_MASK_BIT, GRABBABLE_MASK_BIT};
@@ -81,7 +113,7 @@ static void ShapeFreeWrap(cpSpace *space, cpShape *shape, void *unused){
 }
 
 static void PostShapeFree(cpShape *shape, cpSpace *space){
-	cpSpaceAddPostStepCallback(space, cast(cpPostStepFunc)ShapeFreeWrap, shape, null);
+	cpSpaceAddPostStepCallback(space, cast(cpPostStepFunc)&ShapeFreeWrap, shape, null);
 }
 
 static void ConstraintFreeWrap(cpSpace *space, cpConstraint *constraint, void *unused){
@@ -90,7 +122,7 @@ static void ConstraintFreeWrap(cpSpace *space, cpConstraint *constraint, void *u
 }
 
 static void PostConstraintFree(cpConstraint *constraint, cpSpace *space){
-	cpSpaceAddPostStepCallback(space, cast(cpPostStepFunc)ConstraintFreeWrap, constraint, null);
+	cpSpaceAddPostStepCallback(space, cast(cpPostStepFunc)&ConstraintFreeWrap, constraint, null);
 }
 
 static void BodyFreeWrap(cpSpace *space, cpBody *body_, void *unused){
@@ -99,7 +131,7 @@ static void BodyFreeWrap(cpSpace *space, cpBody *body_, void *unused){
 }
 
 static void PostBodyFree(cpBody *body_, cpSpace *space){
-	cpSpaceAddPostStepCallback(space, cast(cpPostStepFunc)BodyFreeWrap, body_, null);
+	cpSpaceAddPostStepCallback(space, cast(cpPostStepFunc)&BodyFreeWrap, body_, null);
 }
 
 // Safe and future proof way to remove and free all objects that have been added to the space.
@@ -107,10 +139,10 @@ void
 ChipmunkDemoFreeSpaceChildren(cpSpace *space)
 {
 	// Must remove these BEFORE freeing the body_ or you will access dangling pointers.
-	cpSpaceEachShape(space, cast(cpSpaceShapeIteratorFunc)PostShapeFree, space);
-	cpSpaceEachConstraint(space, cast(cpSpaceConstraintIteratorFunc)PostConstraintFree, space);
+	cpSpaceEachShape(space, cast(cpSpaceShapeIteratorFunc)&PostShapeFree, space);
+	cpSpaceEachConstraint(space, cast(cpSpaceConstraintIteratorFunc)&PostConstraintFree, space);
 	
-	cpSpaceEachBody(space, cast(cpSpaceBodyIteratorFunc)PostBodyFree, space);
+	cpSpaceEachBody(space, cast(cpSpaceBodyIteratorFunc)&PostBodyFree, space);
 }
 
 static void
@@ -133,7 +165,7 @@ static void
 DrawDot(cpFloat size, cpVect pos, cpSpaceDebugColor color, cpDataPointer data)
 {ChipmunkDebugDrawDot(size, pos, color);}
 
-static cpSpaceDebugColor
+extern(C) static cpSpaceDebugColor
 ColorForShape(cpShape *shape, cpDataPointer data)
 {
 	if(cpShapeGetSensor(shape)){
@@ -146,7 +178,7 @@ ColorForShape(cpShape *shape, cpDataPointer data)
 		} else if(body_.sleeping.idleTime > shape.space.sleepTimeThreshold) {
 			return LAColor(0.66f, 1.0f);
 		} else {
-			uint32_t val = cast(uint32_t)shape.hashid;
+			uint val = cast(uint)shape.hashid;
 			
 			// scramble the bits up using Robert Jenkins' 32 bit integer hash function
 			val = (val+0x7ed55d16) + (val<<12);
@@ -162,7 +194,7 @@ ColorForShape(cpShape *shape, cpDataPointer data)
 			
 			GLfloat max = cast(GLfloat)cpfmax(cpfmax(r, g), b);
 			GLfloat min = cast(GLfloat)cpfmin(cpfmin(r, g), b);
-			GLfloat intensity = (cpBodyGetType(body_) == CP_BODY_TYPE_STATIC ? 0.15f : 0.75f);
+			GLfloat intensity = (cpBodyGetType(body_) == cpBodyType.CP_BODY_TYPE_STATIC ? 0.15f : 0.75f);
 			
 			// Saturate and scale the color
 			if(min == max){
@@ -184,23 +216,25 @@ ColorForShape(cpShape *shape, cpDataPointer data)
 void
 ChipmunkDemoDefaultDrawImpl(cpSpace *space)
 {
-	cpSpaceDebugDrawOptions drawOptions = {
-		DrawCircle,
-		DrawSegment,
-		DrawFatSegment,
-		DrawPolygon,
-		DrawDot,
-		
-		cast(cpSpaceDebugDrawFlags)(CP_SPACE_DEBUG_DRAW_SHAPES | CP_SPACE_DEBUG_DRAW_CONSTRAINTS | CP_SPACE_DEBUG_DRAW_COLLISION_POINTS),
-		
-		{200.0f/255.0f, 210.0f/255.0f, 230.0f/255.0f, 1.0f},
-		ColorForShape,
-		{0.0f, 0.75f, 0.0f, 1.0f},
-		{1.0f, 0.0f, 0.0f, 1.0f},
-		null,
-	};
-	
-	cpSpaceDebugDraw(space, &drawOptions);
+	with (cpSpaceDebugDrawFlags) {
+		cpSpaceDebugDrawOptions drawOptions = {
+			cast(cpSpaceDebugDrawCircleImpl) &DrawCircle,
+			cast(cpSpaceDebugDrawSegmentImpl) &DrawSegment,
+			cast(cpSpaceDebugDrawFatSegmentImpl) &DrawFatSegment,
+			cast(cpSpaceDebugDrawPolygonImpl) &DrawPolygon,
+			cast(cpSpaceDebugDrawDotImpl) &DrawDot,
+
+			(CP_SPACE_DEBUG_DRAW_SHAPES | CP_SPACE_DEBUG_DRAW_CONSTRAINTS | CP_SPACE_DEBUG_DRAW_COLLISION_POINTS),
+
+			cpSpaceDebugColor(200.0f/255.0f, 210.0f/255.0f, 230.0f/255.0f, 1.0f),
+			&ColorForShape,
+			cpSpaceDebugColor(0.0f, 0.75f, 0.0f, 1.0f),
+			cpSpaceDebugColor(1.0f, 0.0f, 0.0f, 1.0f),
+			null,
+		};
+
+		cpSpaceDebugDraw(space, &drawOptions);
+	}
 }
 
 static void
@@ -249,7 +283,7 @@ DrawInfo()
 		ke += body_.m*cpvdot(body_.v, body_.v) + body_.i*body_.w*body_.w;
 	}
 	
-	sprintf(buffer, format,
+	sprintf(buffer.ptr, format,
 		arbiters, max_arbiters,
 		points, max_points,
 		space.constraints.num, space.iterations,
@@ -257,7 +291,7 @@ DrawInfo()
 		ChipmunkDemoTime, (ke < 1e-10f ? 0.0f : ke)
 	);
 	
-	ChipmunkDemoTextDrawString(cpv(0, 220), buffer);
+	ChipmunkDemoTextDrawString(cpv(0, 220), buffer.ptr);
 }
 
 static char PrintStringBuffer[1024*8];
@@ -266,7 +300,7 @@ static char *PrintStringCursor;
 void
 ChipmunkDemoPrintString(const char *fmt, ...)
 {
-	ChipmunkDemoMessageString = PrintStringBuffer;
+	ChipmunkDemoMessageString = PrintStringBuffer.ptr;
 	
 	va_list args;
 	va_start(args, fmt);
@@ -280,16 +314,16 @@ Tick(double dt)
 {
 	if(!paused || step){
 		PrintStringBuffer[0] = 0;
-		PrintStringCursor = PrintStringBuffer;
+		PrintStringCursor = PrintStringBuffer.ptr;
 		
 		// Completely reset the renderer only at the beginning of a tick.
 		// That way it can always display at least the last ticks' debug drawing.
 		ChipmunkDebugDrawClearRenderer();
 		ChipmunkDemoTextClearRenderer();
 		
-		cpVect new_point = cpvlerp(mouse_body_.p, ChipmunkDemoMouse, 0.25f);
-		mouse_body_.v = cpvmult(cpvsub(new_point, mouse_body_.p), 60.0f);
-		mouse_body_.p = new_point;
+		cpVect new_point = cpvlerp(mouse_body.p, ChipmunkDemoMouse, 0.25f);
+		mouse_body.v = cpvmult(cpvsub(new_point, mouse_body.p), 60.0f);
+		mouse_body.p = new_point;
 		
 		demos[demo_index].updateFunc(space, dt);
 		
@@ -359,7 +393,7 @@ Display()
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-static void
+extern(C) static void
 Reshape(int width, int height)
 {
 	glViewport(0, 0, width, height);
@@ -380,16 +414,14 @@ static char *
 DemoTitle(int index)
 {
 	static char title[1024];
-	sprintf(title, "Demo(%c): %s", 'a' + index, demos[demo_index].name);
+	sprintf(title.ptr, "Demo(%c): %s", 'a' + index, demos[demo_index].name);
 	
-	return title;
+	return title.ptr;
 }
 
 static void
 RunDemo(int index)
 {
-	srand(45073);
-	
 	demo_index = index;
 	
 	ChipmunkDemoTicks = 0;
@@ -398,7 +430,7 @@ RunDemo(int index)
 	LastTime = glfwGetTime();
 	
 	mouse_joint = null;
-	ChipmunkDemoMessageString = "";
+	//ChipmunkDemoMessageString = "";
 	max_arbiters = 0;
 	max_points = 0;
 	max_constraints = 0;
@@ -407,7 +439,7 @@ RunDemo(int index)
 	glfwSetWindowTitle(DemoTitle(index));
 }
 
-static void
+extern(C) static void
 Keyboard(int key, int state)
 {
 	if(state == GLFW_RELEASE) return;
@@ -454,30 +486,30 @@ static cpVect
 MouseToSpace(int x, int y)
 {
 	GLdouble model[16];
-	glGetDoublev(GL_MODELVIEW_MATRIX, model);
+	glGetDoublev(GL_MODELVIEW_MATRIX, model.ptr);
 	
 	GLdouble proj[16];
-	glGetDoublev(GL_PROJECTION_MATRIX, proj);
+	glGetDoublev(GL_PROJECTION_MATRIX, proj.ptr);
  	
 	GLint view[4];
-	glGetIntegerv(GL_VIEWPORT, view);
+	glGetIntegerv(GL_VIEWPORT, view.ptr);
 	
 	int ww, wh;
 	glfwGetWindowSize(&ww, &wh);
 	
 	GLdouble mx, my, mz;
-	gluUnProject(x, wh - y, 0.0f, model, proj, view, &mx, &my, &mz);
+	gluUnProject(x, wh - y, 0.0f, model.ptr, proj.ptr, view.ptr, &mx, &my, &mz);
 	
 	return cpv(mx, my);
 }
 
-static void
+extern(C) static void
 Mouse(int x, int y)
 {
 	ChipmunkDemoMouse = MouseToSpace(x, y);
 }
 
-static void
+extern(C) static void
 Click(int button, int state)
 {
 	if(button == GLFW_MOUSE_BUTTON_1){
@@ -508,7 +540,7 @@ Click(int button, int state)
 	}
 }
 
-static void
+extern(C) static void
 SpecialKeyboard(int key, int state)
 {
 	switch(key){
@@ -520,7 +552,7 @@ SpecialKeyboard(int key, int state)
 	}
 }
 
-static int
+extern(C) static int
 WindowClose()
 {
 	glfwTerminate();
@@ -533,8 +565,8 @@ static void
 SetupGL()
 {
 	glewExperimental = GL_TRUE;
-	cpAssertHard(glewInit() == GLEW_NO_ERROR, "There was an error initializing GLEW.");
-	cpAssertHard(GLEW_ARB_vertex_array_object, "Requires VAO support.");
+	cpAssertHard(glewInit() == GL_NO_ERROR, "There was an error initializing GLEW.");
+	cpAssertHard(__GLEW_ARB_vertex_array_object, "Requires VAO support.");
 	
 	ChipmunkDebugDrawInit();
 	ChipmunkDemoTextInit();
@@ -563,14 +595,14 @@ SetupGLFW()
 	
 	SetupGL();
 	
-	glfwSetWindowSizeCallback(Reshape);
-	glfwSetWindowCloseCallback(WindowClose);
+	glfwSetWindowSizeCallback(&Reshape);
+	glfwSetWindowCloseCallback(&WindowClose);
 	
-	glfwSetCharCallback(Keyboard);
-	glfwSetKeyCallback(SpecialKeyboard);
+	glfwSetCharCallback(&Keyboard);
+	glfwSetKeyCallback(&SpecialKeyboard);
 	
-	glfwSetMousePosCallback(Mouse);
-	glfwSetMouseButtonCallback(Click);
+	glfwSetMousePosCallback(&Mouse);
+	glfwSetMouseButtonCallback(&Click);
 }
 
 static void
@@ -592,10 +624,10 @@ TimeTrial(int index, int count)
 	fflush(stdout);
 }
 
+import Bench;
 import LogoSmash;
 import PyramidStack;
 import Plink;
-import BouncyHexagons;
 import Tumble;
 import PyramidTopple;
 import Planet;
@@ -619,44 +651,44 @@ import Shatter;
 import GJK;
 
 int
-main(int argc, const char **argv)
+main(string[] args)
 {
-	ChipmunkDemo demo_list[] = {
-		LogoSmash,//A
-		PyramidStack,//B
-		Plink,//C
-		BouncyHexagons,//D
-		Tumble,//E
-		PyramidTopple,//F
-		Planet,//G
-		Springies,//H
-		Pump,//I
-		TheoJansen,//J
-		Query,//K
-		OneWay,//L
-		Joints,//M
-		Tank,//N
-		Chains,//O
-		Crane,//P
-		ContactGraph,//Q
-		Buoyancy,//R
-		Player,//S
-		Slice,//T
-		Convex,//U
-		Unicycle,//V
-		Sticky,//W
-		Shatter,//X
-	};
+	ChipmunkDemo demo_list[] = [
+		LogoSmash.LogoSmash,//A
+		PyramidStack.PyramidStack,//B
+		Plink.Plink,//C
+		//BouncyHexagons.BouncyHexagons,//D
+		Tumble.Tumble,//E
+		PyramidTopple.PyramidTopple,//F
+		Planet.Planet,//G
+		Springies.Springies,//H
+		Pump.Pump,//I
+		TheoJansen.TheoJansen,//J
+		Query.Query,//K
+		OneWay.OneWay,//L
+		Joints.Joints,//M
+		Tank.Tank,//N
+		Chains.Chains,//O
+		Crane.Crane,//P
+		ContactGraph.ContactGraph,//Q
+		Buoyancy.Buoyancy,//R
+		Player.Player,//S
+		Slice.Slice,//T
+		Convex.Convex,//U
+		Unicycle.Unicycle,//V
+		Sticky.Sticky,//W
+		Shatter.Shatter,//X
+	];
 	
-	demos = demo_list;
-	demo_count = sizeof(demo_list)/sizeof(ChipmunkDemo);
+	demos = demo_list.ptr;
+	demo_count = cast(int) demo_list.length;
 	int trial = 0;
 	
-	for(int i=0; i<argc; i++){
-		if(strcmp(argv[i], "-bench") == 0){
-			demos = bench_list;
+	foreach(arg ; args){
+		if(arg == "-bench"){
+			demos = bench_list.ptr;
 			demo_count = bench_count;
-		} else if(strcmp(argv[i], "-trial") == 0){
+		} else if(arg == "-trial"){
 			trial = 1;
 		}
 	}

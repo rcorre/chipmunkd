@@ -2,6 +2,8 @@ import chipmunk;
 import chipmunk.chipmunk_unsafe;
 import ChipmunkDemo;
 
+import core.stdc.math;
+
 version (ENABLE_HASTY) {
 	import chipmunk.cpHastySpace;
 	
@@ -23,7 +25,7 @@ else {
 
 const cpFloat bevel = 1.0;
 
-static cpVect simple_terrain_verts[] = {
+static cpVect simple_terrain_verts[] = [
 	{350.00, 425.07}, {336.00, 436.55}, {272.00, 435.39}, {258.00, 427.63}, {225.28, 420.00}, {202.82, 396.00},
 	{191.81, 388.00}, {189.00, 381.89}, {173.00, 380.39}, {162.59, 368.00}, {150.47, 319.00}, {128.00, 311.55},
 	{119.14, 286.00}, {126.84, 263.00}, {120.56, 227.00}, {141.14, 178.00}, {137.52, 162.00}, {146.51, 142.00},
@@ -32,8 +34,7 @@ static cpVect simple_terrain_verts[] = {
 	{468.09,  99.00}, {467.09, 123.00}, {464.92, 135.00}, {469.00, 141.03}, {497.00, 148.67}, {513.85, 180.00},
 	{509.56, 223.00}, {523.51, 247.00}, {523.00, 277.00}, {497.79, 311.00}, {478.67, 348.00}, {467.90, 360.00},
 	{456.76, 382.00}, {432.95, 389.00}, {417.00, 411.32}, {373.00, 433.19}, {361.00, 430.02}, {350.00, 425.07},
-};
-static int simple_terrain_count = sizeof(simple_terrain_verts)/sizeof(cpVect);
+];
 
 //cpBody bodies[1000] = {};
 //cpCircleShape circles[1000] = {};
@@ -86,7 +87,7 @@ SetupSpace_simpleTerrain(){
 	cpSpaceSetCollisionSlop(space, 0.5f);
 	
 	cpVect offset = cpv(-320, -240);
-	for(int i=0; i<(simple_terrain_count - 1); i++){
+	foreach(i ; 0..simple_terrain_verts.length){
 		cpVect a = simple_terrain_verts[i], b = simple_terrain_verts[i+1];
 		cpSpaceAddShape(space, cpSegmentShapeNew(cpSpaceGetStaticBody(space), cpvadd(a, offset), cpvadd(b, offset), 0.0f));
 	}
@@ -188,7 +189,7 @@ static cpSpace *init_SimpleTerrainVHexagons_200(){
 
 
 // ComplexTerrain
-static cpVect complex_terrain_verts[] = {
+static cpVect complex_terrain_verts[] = [
 	{ 46.78, 479.00}, { 35.00, 475.63}, { 27.52, 469.00}, { 23.52, 455.00}, { 23.78, 441.00}, { 28.41, 428.00}, { 49.61, 394.00}, { 59.00, 381.56}, { 80.00, 366.03}, { 81.46, 358.00}, { 86.31, 350.00}, { 77.74, 320.00},
 	{ 70.26, 278.00}, { 67.51, 270.00}, { 58.86, 260.00}, { 57.19, 247.00}, { 38.00, 235.60}, { 25.76, 221.00}, { 24.58, 209.00}, { 27.63, 202.00}, { 31.28, 198.00}, { 40.00, 193.72}, { 48.00, 193.73}, { 55.00, 196.70},
 	{ 62.10, 204.00}, { 71.00, 209.04}, { 79.00, 206.55}, { 88.00, 206.81}, { 95.88, 211.00}, {103.00, 220.49}, {131.00, 220.51}, {137.00, 222.66}, {143.08, 228.00}, {146.22, 234.00}, {147.08, 241.00}, {145.45, 248.00},
@@ -211,8 +212,8 @@ static cpVect complex_terrain_verts[] = {
 	{536.00, 352.96}, {546.06, 336.00}, {553.47, 306.00}, {564.19, 282.00}, {567.84, 268.00}, {578.72, 246.00}, {585.00, 240.97}, {592.00, 238.91}, {600.00, 239.72}, {606.00, 242.82}, {612.36, 251.00}, {613.35, 263.00},
 	{588.75, 324.00}, {583.25, 350.00}, {572.12, 370.00}, {575.45, 378.00}, {575.20, 388.00}, {589.00, 393.81}, {599.20, 404.00}, {607.14, 416.00}, {609.96, 430.00}, {615.45, 441.00}, {613.44, 462.00}, {610.48, 469.00},
 	{603.00, 475.63}, {590.96, 479.00}, 
-};
-static int complex_terrain_count = sizeof(complex_terrain_verts)/sizeof(cpVect);
+];
+static int complex_terrain_count() { return complex_terrain_verts.length; }
 
 static cpSpace *init_ComplexTerrainCircles_1000(){
 	cpSpace *space = BENCH_SPACE_NEW();
@@ -272,7 +273,7 @@ static cpSpace *init_ComplexTerrainHexagons_1000(){
 
 
 // BouncyTerrain
-static cpVect bouncy_terrain_verts[] = {
+static cpVect bouncy_terrain_verts[] = [
 	{537.18,  23.00}, {520.50,  36.00}, {501.53,  63.00}, {496.14,  76.00}, {498.86,  86.00}, {504.00,  90.51}, {508.00,  91.36}, {508.77,  84.00}, {513.00,  77.73}, {519.00,  74.48}, {530.00,  74.67}, {545.00,  54.65},
 	{554.00,  48.77}, {562.00,  46.39}, {568.00,  45.94}, {568.61,  47.00}, {567.94,  55.00}, {571.27,  64.00}, {572.92,  80.00}, {572.00,  81.39}, {563.00,  79.93}, {556.00,  82.69}, {551.49,  88.00}, {549.00,  95.76},
 	{538.00,  93.40}, {530.00, 102.38}, {523.00, 104.00}, {517.00, 103.02}, {516.22, 109.00}, {518.96, 116.00}, {526.00, 121.15}, {534.00, 116.48}, {543.00, 116.77}, {549.28, 121.00}, {554.00, 130.17}, {564.00, 125.67},
@@ -316,8 +317,8 @@ static cpVect bouncy_terrain_verts[] = {
 	{377.00,  81.34}, {382.00,  83.41}, {392.00,  83.40}, {399.00,  79.15}, {404.00,  85.74}, {411.00,  85.06}, {417.00,  86.62}, {423.38,  93.00}, {425.05, 104.00}, {438.00, 110.35}, {450.00, 112.17}, {452.62, 103.00},
 	{456.00,  98.73}, {462.00,  95.48}, {472.00,  95.79}, {471.28,  92.00}, {464.00,  84.62}, {445.00,  80.39}, {436.00,  75.33}, {428.00,  68.46}, {419.00,  68.52}, {413.00,  65.27}, {408.48,  58.00}, {409.87,  46.00},
 	{404.42,  39.00}, {408.00,  33.88}, {415.00,  29.31}, {429.00,  26.45}, {455.00,  28.77}, {470.00,  33.81}, {482.00,  42.16}, {494.00,  46.85}, {499.65,  36.00}, {513.00,  25.95}, {529.00,  22.42}, {537.18,  23.00}, 
-};
-static int bouncy_terrain_count = sizeof(bouncy_terrain_verts)/sizeof(cpVect);
+];
+static int bouncy_terrain_count() { return bouncy_terrain_verts.length; }
 
 static cpSpace *init_BouncyTerrainCircles_500(){
 	cpSpace *space = BENCH_SPACE_NEW();
@@ -364,11 +365,11 @@ static cpSpace *init_BouncyTerrainHexagons_500(){
 	
 	for(int i=0; i<500; i++){
 		cpFloat mass = radius*radius;
-		cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForPoly(mass, 6, hexagon, cpvzero, 0.0f)));
+		cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForPoly(mass, 6, hexagon.ptr, cpvzero, 0.0f)));
 		cpBodySetPosition(body_, cpvadd(cpvmult(frand_unit_circle(), 130.0f), cpvzero));
 		cpBodySetVelocity(body_, cpvmult(frand_unit_circle(), 50.0f));
 		
-		cpShape *shape = cpSpaceAddShape(space, cpPolyShapeNew(body_, 6, hexagon, cpTransformIdentity, bevel));
+		cpShape *shape = cpSpaceAddShape(space, cpPolyShapeNew(body_, 6, hexagon.ptr, cpTransformIdentity, bevel));
 		cpShapeSetElasticity(shape, 1.0);
 	}
 	
@@ -449,41 +450,42 @@ static void destroy(cpSpace *space){
 }
 
 // Make a second demo declaration for this demo to use in the regular demo set.
-ChipmunkDemo BouncyHexagons = {
+ChipmunkDemo.ChipmunkDemo BouncyHexagons = {
 	"Bouncy Hexagons",
 	1.0/60.0,
-	init_BouncyTerrainHexagons_500,
-	update,
-	ChipmunkDemoDefaultDrawImpl,
-	destroy,
+	&init_BouncyTerrainHexagons_500,
+	&update,
+	&ChipmunkDemoDefaultDrawImpl,
+	&destroy,
 };
 
-auto BENCH(string n) {
-    return ChipmunkDemo("benchmark - " ~ n, 
+auto BENCH(string n)() {
+    return ChipmunkDemo.ChipmunkDemo("benchmark - " ~ n, 
                         1.0/60.0, 
-                        mixin("init_"~n), 
-                        update, 
-                        ChipmunkDemoDefaultDrawImpl, 
-                        destroy);
+                        mixin("&init_"~n), 
+                        &update, 
+                        &ChipmunkDemoDefaultDrawImpl, 
+                        &destroy);
 }
-ChipmunkDemo bench_list[] = {
-	BENCH(SimpleTerrainCircles_1000),
-	BENCH(SimpleTerrainCircles_500),
-	BENCH(SimpleTerrainCircles_100),
-	BENCH(SimpleTerrainBoxes_1000),
-	BENCH(SimpleTerrainBoxes_500),
-	BENCH(SimpleTerrainBoxes_100),
-	BENCH(SimpleTerrainHexagons_1000),
-	BENCH(SimpleTerrainHexagons_500),
-	BENCH(SimpleTerrainHexagons_100),
-	BENCH(SimpleTerrainVCircles_200),
-	BENCH(SimpleTerrainVBoxes_200),
-	BENCH(SimpleTerrainVHexagons_200),
-	BENCH(ComplexTerrainCircles_1000),
-	BENCH(ComplexTerrainHexagons_1000),
-	BENCH(BouncyTerrainCircles_500),
-	BENCH(BouncyTerrainHexagons_500),
-	BENCH(NoCollide),
-};
 
-int bench_count = sizeof(bench_list)/sizeof(ChipmunkDemo);
+ChipmunkDemo bench_list[] = [
+	BENCH!("SimpleTerrainCircles_1000"),
+	BENCH!("SimpleTerrainCircles_500"),
+	BENCH!("SimpleTerrainCircles_100"),
+	BENCH!("SimpleTerrainBoxes_1000"),
+	BENCH!("SimpleTerrainBoxes_500"),
+	BENCH!("SimpleTerrainBoxes_100"),
+	BENCH!("SimpleTerrainHexagons_1000"),
+	BENCH!("SimpleTerrainHexagons_500"),
+	BENCH!("SimpleTerrainHexagons_100"),
+	BENCH!("SimpleTerrainVCircles_200"),
+	BENCH!("SimpleTerrainVBoxes_200"),
+	BENCH!("SimpleTerrainVHexagons_200"),
+	BENCH!("ComplexTerrainCircles_1000"),
+	BENCH!("ComplexTerrainHexagons_1000"),
+	BENCH!("BouncyTerrainCircles_500"),
+	BENCH!("BouncyTerrainHexagons_500"),
+	BENCH!("NoCollide"),
+];
+
+int bench_count() { return bench_list.length; }

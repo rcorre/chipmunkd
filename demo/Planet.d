@@ -124,8 +124,8 @@ destroy(cpSpace *space)
 ChipmunkDemo Planet = {
 	"Planet",
 	1.0/60.0,
-	init,
-	update,
-	ChipmunkDemoDefaultDrawImpl,
-	destroy,
+	&init,
+	&update,
+	&ChipmunkDemoDefaultDrawImpl,
+	&destroy,
 };

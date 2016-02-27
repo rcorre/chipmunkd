@@ -160,8 +160,8 @@ destroy(cpSpace *space)
 ChipmunkDemo TheoJansen = {
 	"Theo Jansen Machine",
 	1.0/180.0,
-	init,
-	update,
-	ChipmunkDemoDefaultDrawImpl,
-	destroy,
+	&init,
+	&update,
+	&ChipmunkDemoDefaultDrawImpl,
+	&destroy,
 };

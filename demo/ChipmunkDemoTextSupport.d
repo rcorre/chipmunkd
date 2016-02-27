@@ -196,6 +196,24 @@ PushChar(int character, GLfloat x, GLfloat y, cpSpaceDebugColor color)
 }
 
 void
+ChipmunkDemoTextDrawString(cpVect pos, const char *str)
+{
+	cpSpaceDebugColor c = LAColor(1.0f, 1.0f);
+	GLfloat x = cast(GLfloat)pos.x, y = cast(GLfloat)pos.y;
+	
+	for(size_t i=0, len=strlen(str); i<len; i++){
+		if(str[i] == '\n'){
+			y -= LineHeight;
+			x = cast(GLfloat)pos.x;
+//		} else if(str[i] == '*'){ // print out the last demo key
+//			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, 'A' + demoCount - 1);
+		} else {
+			x += cast(GLfloat)PushChar(str[i], x, y, c);
+		}
+	}
+}
+
+void
 ChipmunkDemoTextFlushRenderer()
 {
 //	triangle_count = 0;

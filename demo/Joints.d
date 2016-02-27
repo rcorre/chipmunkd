@@ -291,8 +291,8 @@ destroy(cpSpace *space)
 ChipmunkDemo Joints = {
 	"Joints and Constraints",
 	1.0/60.0,
-	init,
-	update,
-	ChipmunkDemoDefaultDrawImpl,
-	destroy,
+	&init,
+	&update,
+	&ChipmunkDemoDefaultDrawImpl,
+	&destroy,
 };

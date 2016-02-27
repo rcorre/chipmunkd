@@ -32,7 +32,7 @@ update(cpSpace *space, double dt)
 enum FLUID_DENSITY = 0.00014;
 enum FLUID_DRAG = 2.0;
 
-char messageBuffer[1024] = {};
+char messageBuffer[1024] = [];
 
 // Modified from chipmunk_private.h
 static cpFloat
@@ -219,8 +219,8 @@ destroy(cpSpace *space)
 ChipmunkDemo Buoyancy = {
 	"Simple Sensor based fluids.",
 	1.0/180.0,
-	init,
-	update,
-	ChipmunkDemoDefaultDrawImpl,
-	destroy,
+	&init,
+	&update,
+	&ChipmunkDemoDefaultDrawImpl,
+	&destroy,
 };

@@ -24,8 +24,8 @@ import core.stdc.stdio;
 import core.stdc.math;
 import core.stdc.string;
 
-import chipmunk_private;
-import chipmunk_unsafe;
+import chipmunk.chipmunk_private;
+import chipmunk.chipmunk_unsafe;
 import ChipmunkDemo;
 
 static cpShape *shape1, shape2;
@@ -141,8 +141,8 @@ destroy(cpSpace *space)
 ChipmunkDemo GJK = {
 	"GJK",
 	1.0f/60.0f,
-	init,
-	update,
-	draw,
-	destroy,
+	&init,
+	&update,
+	&draw,
+	&destroy,
 };

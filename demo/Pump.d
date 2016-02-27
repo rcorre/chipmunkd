@@ -184,8 +184,8 @@ destroy(cpSpace *space)
 ChipmunkDemo Pump = {
 	"Pump",
 	1.0/120.0,
-	init,
-	update,
-	ChipmunkDemoDefaultDrawImpl,
-	destroy,
+	&init,
+	&update,
+	&ChipmunkDemoDefaultDrawImpl,
+	&destroy,
 };

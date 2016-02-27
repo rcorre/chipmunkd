@@ -172,8 +172,8 @@ destroy(cpSpace *space)
 ChipmunkDemo Unicycle = {
 	"Unicycle",
 	1.0/60.0,
-	init,
-	update,
-	ChipmunkDemoDefaultDrawImpl,
-	destroy,
+	&init,
+	&update,
+	&ChipmunkDemoDefaultDrawImpl,
+	&destroy,
 };

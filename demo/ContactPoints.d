@@ -30,7 +30,7 @@ import ChipmunkDemo;
 static cpBool NeverCollide(cpArbiter *arb, cpSpace *space, void *data){return cpFalse;}
 
 static void
-update(cpSpace *space)
+update(cpSpace *space, cpFloat dt)
 {
 	int steps = 1;
 	cpFloat dt = 1.0f/60.0f/cast(cpFloat)steps;
@@ -136,8 +136,8 @@ destroy(cpSpace *space)
 ChipmunkDemo ContactPoints = {
 	"ContactPoints",
 	1.0/60.0,
-	init,
-	update,
-	ChipmunkDemoDefaultDrawImpl,
-	destroy,
+	&init,
+	&update,
+	&ChipmunkDemoDefaultDrawImpl,
+	&destroy,
 };

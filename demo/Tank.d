@@ -129,8 +129,8 @@ destroy(cpSpace *space)
 ChipmunkDemo Tank = {
 	"Tank",
 	1.0/60.0,
-	init,
-	update,
-	ChipmunkDemoDefaultDrawImpl,
-	destroy,
+	&init,
+	&update,
+	&ChipmunkDemoDefaultDrawImpl,
+	&destroy,
 };

@@ -41,7 +41,7 @@ static cpBool DrawContacts(cpArbiter *arb, cpSpace *space, void *data){
 }
 
 static void
-update(cpSpace *space)
+update(cpSpace *space, cpFloat dt)
 {
 	int steps = 1;
 	cpFloat dt = 1.0f/60.0f/cast(cpFloat)steps;
@@ -52,8 +52,8 @@ update(cpSpace *space)
 }
 
 import std.algorithm;
-enum MAX = std.algorithm.max;
-enum MIN = std.algorithm.min;
+alias MAX = std.algorithm.max;
+alias MIN = std.algorithm.min;
 
 static cpSpace *
 init()
@@ -135,8 +135,8 @@ destroy(cpSpace *space)
 ChipmunkDemo Smooth = {
 	"Smooth",
 	1.0f/60.0f,
-	init,
-	update,
-	ChipmunkDemoDefaultDrawImpl,
-	destroy,
+	&init,
+	&update,
+	&ChipmunkDemoDefaultDrawImpl,
+	&destroy,
 };
