@@ -70,12 +70,14 @@ struct cpBody
     cpShape* shapeList;
     cpArbiter* arbiterList;
     cpConstraint* constraintList;
-    struct
+
+    private struct Sleeping
     {
         cpBody* root;
         cpBody* next;
         cpFloat idleTime;
     }
+	Sleeping sleeping;
 }
 
 struct cpArbiterThread
