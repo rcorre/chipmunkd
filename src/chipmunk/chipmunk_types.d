@@ -9,6 +9,8 @@ import chipmunk.cpVect;
 extern (C):
 
 enum CP_NO_GROUP = 0;
+enum cpBitmask CP_ALL_CATEGORIES = ~0;
+enum cpCollisionType CP_WILDCARD_COLLISION_TYPE = ~0;
 
 // TODO: support CP_USE_DOUBLES? Right now I just assume we're using doubles.
 
@@ -33,6 +35,13 @@ alias c_ulong cpCollisionType;
 alias c_ulong cpGroup;
 alias uint cpBitmask;
 alias uint cpTimestamp;
+
+enum cpFalse = 0;
+enum cpTrue = 1;
+
+enum INFINITY = cpFloat.infinity;
+
+enum CP_PI = cast(cpFloat)3.14159265358979323846264338327950288;
 
 struct cpVect
 {

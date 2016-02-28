@@ -16,7 +16,7 @@ struct cpContactPointSet
     private struct contactPoint {
        cpVect pointA, pointB;
        cpFloat distance;
-    } 
+    }
 }
 
 cpFloat cpArbiterGetRestitution (const(cpArbiter)* arb);
