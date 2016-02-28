@@ -22,6 +22,7 @@
 import chipmunk;
 
 import ChipmunkDemo;
+import core.stdc.stdlib;
 
 enum DENSITY = (1.0/10000.0);
 
@@ -76,7 +77,7 @@ struct SliceContext {
 	cpSpace *space;
 };
 
-static void
+extern(C) static void
 SliceShapePostStep(cpSpace *space, cpShape *shape, SliceContext *context)
 {
 	cpVect a = context.a;
@@ -96,7 +97,7 @@ SliceShapePostStep(cpSpace *space, cpShape *shape, SliceContext *context)
 	cpBodyFree(body_);
 }
 
-static void
+extern(C) static void
 SliceQuery(cpShape *shape, cpVect point, cpVect normal, cpFloat alpha, SliceContext *context)
 {
 	cpVect a = context.a;
@@ -106,7 +107,7 @@ SliceQuery(cpShape *shape, cpVect point, cpVect normal, cpFloat alpha, SliceCont
 	if(cpShapePointQuery(shape, a, null) > 0.0f && cpShapePointQuery(shape, b, null) > 0.0f){
 		// Can't modify the space during a query.
 		// Must make a post-step callback to do the actual slicing.
-		cpSpaceAddPostStepCallback(context.space, cast(cpPostStepFunc)SliceShapePostStep, shape, context);
+		cpSpaceAddPostStepCallback(context.space, cast(cpPostStepFunc)&SliceShapePostStep, shape, context);
 	}
 }
 
@@ -127,7 +128,7 @@ update(cpSpace *space, double dt)
 		} else {
 			// MouseUp
 			SliceContext context = {sliceStart, ChipmunkDemoMouse, space};
-			cpSpaceSegmentQuery(space, sliceStart, ChipmunkDemoMouse, 0.0, GRAB_FILTER, cast(cpSpaceSegmentQueryFunc)SliceQuery, &context);
+			cpSpaceSegmentQuery(space, sliceStart, ChipmunkDemoMouse, 0.0, GRAB_FILTER, cast(cpSpaceSegmentQueryFunc)&SliceQuery, &context);
 		}
 		
 		lastClickState = ChipmunkDemoRightClick;

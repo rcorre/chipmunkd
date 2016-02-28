@@ -22,16 +22,19 @@
 import chipmunk;
 import ChipmunkDemo;
 
+import std.math;
+import std.random;
+
 static cpFloat pentagon_mass = 0.0f;
 static cpFloat pentagon_moment = 0.0f;
 
 // Iterate over all of the bodies and reset the ones that have fallen offscreen.
-static void
+extern(C) static void
 eachBody(cpBody *body_, void *unused)
 {
 	cpVect pos = cpBodyGetPosition(body_);
 	if(pos.y < -260 || cpfabs(pos.x) > 340){
-		cpFloat x = rand()/cast(cpFloat)RAND_MAX*640 - 320;
+		cpFloat x = uniform01()*640 - 320;
 		cpBodySetPosition(body_, cpv(x, 260));
 	}
 }
@@ -72,18 +75,18 @@ init()
 	cpShape *shape;
 	
 	// Vertexes for a triangle shape.
-	cpVect tris[] = {
+	cpVect tris[] = [
 		cpv(-15,-15),
 		cpv(  0, 10),
 		cpv( 15,-15),
-	};
+	];
 
 	// Create the static triangles.
 	for(int i=0; i<9; i++){
 		for(int j=0; j<6; j++){
 			cpFloat stagger = (j%2)*40;
 			cpVect offset = cpv(i*80 - 320 + stagger, j*70 - 240);
-			shape = cpSpaceAddShape(space, cpPolyShapeNew(staticBody, 3, tris, cpTransformTranslate(offset), 0.0));
+			shape = cpSpaceAddShape(space, cpPolyShapeNew(staticBody, 3, tris.ptr, cpTransformTranslate(offset), 0.0));
 			cpShapeSetElasticity(shape, 1.0f);
 			cpShapeSetFriction(shape, 1.0f);
 			cpShapeSetFilter(shape, NOT_GRABBABLE_FILTER);
@@ -98,15 +101,15 @@ init()
 	}
 	
 	pentagon_mass = 1.0;
-	pentagon_moment = cpMomentForPoly(1.0f, NUM_VERTS, verts, cpvzero, 0.0f);
+	pentagon_moment = cpMomentForPoly(1.0f, NUM_VERTS, verts.ptr, cpvzero, 0.0f);
 	
 	// Add lots of pentagons.
 	for(int i=0; i<300; i++){
 		body_ = cpSpaceAddBody(space, cpBodyNew(pentagon_mass, pentagon_moment));
-		cpFloat x = rand()/cast(cpFloat)RAND_MAX*640 - 320;
+		cpFloat x = uniform01()*640 - 320;
 		cpBodySetPosition(body_, cpv(x, 350));
 		
-		shape = cpSpaceAddShape(space, cpPolyShapeNew(body_, NUM_VERTS, verts, cpTransformIdentity, 0.0));
+		shape = cpSpaceAddShape(space, cpPolyShapeNew(body_, NUM_VERTS, verts.ptr, cpTransformIdentity, 0.0));
 		cpShapeSetElasticity(shape, 0.0f);
 		cpShapeSetFriction(shape, 0.4f);
 	}

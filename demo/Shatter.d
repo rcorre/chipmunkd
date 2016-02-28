@@ -20,6 +20,7 @@
  */
 
 import core.stdc.string;
+import core.stdc.stdlib;
 
 import chipmunk;
 
@@ -42,7 +43,7 @@ HashVect(uint x, uint y, uint seed)
 {
 //	cpFloat border = 0.21f;
 	cpFloat border = 0.05f;
-	uint h = (x*1640531513 ^ y*2654435789) + seed;
+	uint h = cast(uint)((x*1640531513 ^ y*2654435789) + seed);
 
 	return cpv(
 		cpflerp(border, 1.0f - border, cast(cpFloat)(      h & 0xFFFF)/cast(cpFloat)0xFFFF),
@@ -84,8 +85,8 @@ ClipCell(cpShape *shape, cpVect center, int i, int j, WorleyContex *context, cpV
 	cpFloat dist = cpvdot(n, cpvlerp(center, other, 0.5f));
 
 	int clipped_count = 0;
-	for(int j=0, i=count-1; j<count; i=j, j++){
-		cpVect a = verts[i];
+	for(int j_=0, i_=count-1; j_<count; i_=j_, j_++){ 
+		cpVect a = verts[i_];
 		cpFloat a_dist = cpvdot(a, n) - dist;
 
 		if(a_dist <= 0.0){
@@ -93,7 +94,7 @@ ClipCell(cpShape *shape, cpVect center, int i, int j, WorleyContex *context, cpV
 			clipped_count++;
 		}
 
-		cpVect b = verts[j];
+		cpVect b = verts[j_];
 		cpFloat b_dist = cpvdot(b, n) - dist;
 
 		if(a_dist*b_dist < 0.0f){

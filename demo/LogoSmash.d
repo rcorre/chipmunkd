@@ -76,7 +76,7 @@ update(cpSpace *space, double dt)
 	cpSpaceStep(space, dt);
 }
 
-	static void
+extern(C) static void
 DrawDot(cpBody *body_, void *unused)
 {
 	ChipmunkDebugDrawDot(3.0, cpBodyGetPosition(body_), RGBAColor(200.0f/255.0f, 210.0f/255.0f, 230.0f/255.0f, 1.0f));
@@ -85,7 +85,7 @@ DrawDot(cpBody *body_, void *unused)
 	static void
 draw(cpSpace *space)
 {
-	cpSpaceEachBody(space, DrawDot, null);
+	cpSpaceEachBody(space, &DrawDot, null);
 
 	//	ChipmunkDebugDrawCollisionPoints(space);
 }

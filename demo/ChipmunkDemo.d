@@ -98,7 +98,7 @@ cpVect ChipmunkDemoKeyboard = {};
 static cpBody *mouse_body = null;
 static cpConstraint *mouse_joint = null;
 
-char* ChipmunkDemoMessageString = null;
+immutable(char)* ChipmunkDemoMessageString = null;
 
 enum GRABBABLE_MASK_BIT = (1<<31);
 cpShapeFilter GRAB_FILTER = {CP_NO_GROUP, GRABBABLE_MASK_BIT, GRABBABLE_MASK_BIT};
@@ -300,7 +300,7 @@ static char *PrintStringCursor;
 void
 ChipmunkDemoPrintString(const char *fmt, ...)
 {
-	ChipmunkDemoMessageString = PrintStringBuffer.ptr;
+	ChipmunkDemoMessageString = cast(immutable(char)*)PrintStringBuffer.ptr;
 	
 	va_list args;
 	va_start(args, fmt);
@@ -648,11 +648,12 @@ import Convex;
 import Unicycle;
 import Sticky;
 import Shatter;
-import GJK;
 
 int
 main(string[] args)
 {
+	srand(45073);
+
 	ChipmunkDemo demo_list[] = [
 		LogoSmash.LogoSmash,//A
 		PyramidStack.PyramidStack,//B
@@ -687,7 +688,7 @@ main(string[] args)
 	foreach(arg ; args){
 		if(arg == "-bench"){
 			demos = bench_list.ptr;
-			demo_count = bench_count;
+			demo_count = cast(int)bench_count;
 		} else if(arg == "-trial"){
 			trial = 1;
 		}

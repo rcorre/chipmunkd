@@ -169,7 +169,7 @@ init()
 	cpShapeSetFilter(shape, NOT_GRABBABLE_FILTER);
 	
 	cpVect boxOffset;
-	cpBody *body_1, body2;
+	cpBody *body1, body2;
 	
 	cpVect posA = cpv( 50, 60);
 	cpVect posB = cpv(110, 60);
@@ -182,20 +182,20 @@ init()
 	boxOffset = cpv(-320, -240);
 	body1 = addBall(space, posA, boxOffset);
 	body2 = addBall(space, posB, boxOffset);
-	cpSpaceAddConstraint(space, cpPinJointNew(body1, body_2, cpv(15,0), cpv(-15,0)));
+	cpSpaceAddConstraint(space, cpPinJointNew(body1, body2, cpv(15,0), cpv(-15,0)));
 	
 	// Slide Joints - Like pin joints but with a min/max distance.
 	// Can be used for a cheap approximation of a rope.
 	boxOffset = cpv(-160, -240);
 	body1 = addBall(space, posA, boxOffset);
 	body2 = addBall(space, posB, boxOffset);
-	cpSpaceAddConstraint(space, cpSlideJointNew(body1, body_2, cpv(15,0), cpv(-15,0), 20.0f, 40.0f));
+	cpSpaceAddConstraint(space, cpSlideJointNew(body1, body2, cpv(15,0), cpv(-15,0), 20.0f, 40.0f));
 	
 	// Pivot Joints - Holds the two anchor points together. Like a swivel.
 	boxOffset = cpv(0, -240);
 	body1 = addBall(space, posA, boxOffset);
 	body2 = addBall(space, posB, boxOffset);
-	cpSpaceAddConstraint(space, cpPivotJointNew(body1, body_2, cpvadd(boxOffset, cpv(80,60))));
+	cpSpaceAddConstraint(space, cpPivotJointNew(body1, body2, cpvadd(boxOffset, cpv(80,60))));
 	// cpPivotJointNew() takes it's anchor parameter in world coordinates. The anchors are calculated from that
 	// cpPivotJointNew2() lets you specify the two anchor points explicitly
 	
@@ -203,13 +203,13 @@ init()
 	boxOffset = cpv(160, -240);
 	body1 = addBall(space, posA, boxOffset);
 	body2 = addBall(space, posB, boxOffset);
-	cpSpaceAddConstraint(space, cpGrooveJointNew(body1, body_2, cpv(30,30), cpv(30,-30), cpv(-30,0)));
+	cpSpaceAddConstraint(space, cpGrooveJointNew(body1, body2, cpv(30,30), cpv(30,-30), cpv(-30,0)));
 	
 	// Damped Springs
 	boxOffset = cpv(-320, -120);
 	body1 = addBall(space, posA, boxOffset);
 	body2 = addBall(space, posB, boxOffset);
-	cpSpaceAddConstraint(space, cpDampedSpringNew(body1, body_2, cpv(15,0), cpv(-15,0), 20.0f, 5.0f, 0.3f));
+	cpSpaceAddConstraint(space, cpDampedSpringNew(body1, body2, cpv(15,0), cpv(-15,0), 20.0f, 5.0f, 0.3f));
 	
 	// Damped Rotary Springs
 	boxOffset = cpv(-160, -120);
@@ -218,7 +218,7 @@ init()
 	// Add some pin joints to hold the circles in place.
 	cpSpaceAddConstraint(space, cpPivotJointNew(body1, staticBody, POS_A));
 	cpSpaceAddConstraint(space, cpPivotJointNew(body2, staticBody, POS_B));
-	cpSpaceAddConstraint(space, cpDampedRotarySpringNew(body1, body_2, 0.0f, 3000.0f, 60.0f));
+	cpSpaceAddConstraint(space, cpDampedRotarySpringNew(body1, body2, 0.0f, 3000.0f, 60.0f));
 	
 	// Rotary Limit Joint
 	boxOffset = cpv(0, -120);
@@ -228,7 +228,7 @@ init()
 	cpSpaceAddConstraint(space, cpPivotJointNew(body1, staticBody, POS_A));
 	cpSpaceAddConstraint(space, cpPivotJointNew(body2, staticBody, POS_B));
 	// Hold their rotation within 90 degrees of each other.
-	cpSpaceAddConstraint(space, cpRotaryLimitJointNew(body1, body_2, -CP_PI/2.0f, CP_PI/2.0f));
+	cpSpaceAddConstraint(space, cpRotaryLimitJointNew(body1, body2, -CP_PI/2.0f, CP_PI/2.0f));
 	
 	// Ratchet Joint - A rotary ratchet, like a socket wrench
 	boxOffset = cpv(160, -120);
@@ -238,7 +238,7 @@ init()
 	cpSpaceAddConstraint(space, cpPivotJointNew(body1, staticBody, POS_A));
 	cpSpaceAddConstraint(space, cpPivotJointNew(body2, staticBody, POS_B));
 	// Ratchet every 90 degrees
-	cpSpaceAddConstraint(space, cpRatchetJointNew(body1, body_2, 0.0f, CP_PI/2.0f));
+	cpSpaceAddConstraint(space, cpRatchetJointNew(body1, body2, 0.0f, CP_PI/2.0f));
 	
 	// Gear Joint - Maintain a specific angular velocity ratio
 	boxOffset = cpv(-320, 0);
@@ -248,7 +248,7 @@ init()
 	cpSpaceAddConstraint(space, cpPivotJointNew(body1, staticBody, POS_A));
 	cpSpaceAddConstraint(space, cpPivotJointNew(body2, staticBody, POS_B));
 	// Force one to sping 2x as fast as the other
-	cpSpaceAddConstraint(space, cpGearJointNew(body1, body_2, 0.0f, 2.0f));
+	cpSpaceAddConstraint(space, cpGearJointNew(body1, body2, 0.0f, 2.0f));
 	
 	// Simple Motor - Maintain a specific angular relative velocity
 	boxOffset = cpv(-160, 0);
@@ -258,7 +258,7 @@ init()
 	cpSpaceAddConstraint(space, cpPivotJointNew(body1, staticBody, POS_A));
 	cpSpaceAddConstraint(space, cpPivotJointNew(body2, staticBody, POS_B));
 	// Make them spin at 1/2 revolution per second in relation to each other.
-	cpSpaceAddConstraint(space, cpSimpleMotorNew(body1, body_2, CP_PI));
+	cpSpaceAddConstraint(space, cpSimpleMotorNew(body1, body2, CP_PI));
 	
 	// Make a car with some nice soft suspension
 	boxOffset = cpv(0, 0);

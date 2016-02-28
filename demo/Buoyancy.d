@@ -115,7 +115,7 @@ else
 static cpSpace *
 init()
 {
-	ChipmunkDemoMessageString = messageBuffer.ptr;
+	ChipmunkDemoMessageString = cast(immutable(char)*)messageBuffer.ptr;
 	
 	cpSpace *space = cpSpaceNew();
 	cpSpaceSetIterations(space, 30);

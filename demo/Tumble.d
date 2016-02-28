@@ -21,6 +21,8 @@
  
 import chipmunk;
 import ChipmunkDemo;
+import core.stdc.stdlib;
+import core.stdc.math;
 
 static cpBody *KinematicBoxBody;
 

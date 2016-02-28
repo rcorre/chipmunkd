@@ -28,7 +28,7 @@ enum {
 
 enum STICK_SENSOR_THICKNESS = 2.5f;
 
-static void
+extern(C) static void
 PostStepAddJoint(cpSpace *space, void *key, void *data)
 {
 //	printf("Adding joint for %p\n", data);
@@ -37,7 +37,7 @@ PostStepAddJoint(cpSpace *space, void *key, void *data)
 	cpSpaceAddConstraint(space, joint);
 }
 
-static cpBool
+extern(C) static cpBool
 StickyPreSolve(cpArbiter *arb, cpSpace *space, void *data)
 {
 	// We want to fudge the collisions a bit to allow shapes to overlap more.
@@ -62,18 +62,19 @@ StickyPreSolve(cpArbiter *arb, cpSpace *space, void *data)
 	// If the shapes are overlapping enough, then create a
 	// joint that sticks them together at the first contact point.
 	if(!cpArbiterGetUserData(arb) && deepest <= 0.0f){
-		CP_ARBITER_GET_BODIES(arb, body_A, body_B);
+		cpBody* bodyA, bodyB;
+		cpArbiterGetBodies(arb, &bodyA, &bodyB);
 		
-		// Create a joint at the contact point to hold the body_ in place.
+		// Create a joint at the contact point to hold the body in place.
 		cpVect anchorA = cpBodyWorldToLocal(bodyA, contacts.points[0].pointA);
 		cpVect anchorB = cpBodyWorldToLocal(bodyB, contacts.points[0].pointB);
-		cpConstraint *joint = cpPivotJointNew2(bodyA, body_B, anchorA, anchorB);
+		cpConstraint *joint = cpPivotJointNew2(bodyA, bodyB, anchorA, anchorB);
 		
 		// Give it a finite force for the stickyness.
 		cpConstraintSetMaxForce(joint, 3e3);
 		
 		// Schedule a post-step() callback to add the joint.
-		cpSpaceAddPostStepCallback(space, PostStepAddJoint, joint, null);
+		cpSpaceAddPostStepCallback(space, &PostStepAddJoint, joint, null);
 		
 		// Store the joint on the arbiter so we can remove it later.
 		cpArbiterSetUserData(arb, joint);
@@ -91,7 +92,7 @@ StickyPreSolve(cpArbiter *arb, cpSpace *space, void *data)
 	// * Track a joint for each contact point. (more complicated since you only get one data pointer).
 }
 
-static void
+extern(C) static void
 PostStepRemoveJoint(cpSpace *space, void *key, void *data)
 {
 //	printf("Removing joint for %p\n", data);
@@ -101,7 +102,7 @@ PostStepRemoveJoint(cpSpace *space, void *key, void *data)
 	cpConstraintFree(joint);
 }
 
-static void
+extern(C) static void
 StickySeparate(cpArbiter *arb, cpSpace *space, void *data)
 {
 	cpConstraint *joint = cast(cpConstraint *)cpArbiterGetUserData(arb);
@@ -113,7 +114,7 @@ StickySeparate(cpArbiter *arb, cpSpace *space, void *data)
 		cpConstraintSetMaxForce(joint, 0.0f);
 		
 		// Perform the removal in a post-step() callback.
-		cpSpaceAddPostStepCallback(space, PostStepRemoveJoint, joint, null);
+		cpSpaceAddPostStepCallback(space, &PostStepRemoveJoint, joint, null);
 		
 		// null out the reference to the joint.
 		// Not required, but it's a good practice.
@@ -168,14 +169,14 @@ init()
 		cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForCircle(mass, 0.0f, radius, cpvzero)));
 		cpBodySetPosition(body_, cpv(cpflerp(-150.0f, 150.0f, frand()), cpflerp(-150.0f, 150.0f, frand())));
 
-		cpShape *shape = cpSpaceAddShape(space, cpCircleShapeNew(body_, radius + STICK_SENSOR_THICKNESS, cpvzero));
-		cpShapeSetFriction(shape, 0.9f);
-		cpShapeSetCollisionType(shape, COLLISION_TYPE_STICKY);
+		cpShape *shape_ = cpSpaceAddShape(space, cpCircleShapeNew(body_, radius + STICK_SENSOR_THICKNESS, cpvzero));
+		cpShapeSetFriction(shape_, 0.9f);
+		cpShapeSetCollisionType(shape_, COLLISION_TYPE_STICKY);
 	}
 	
 	cpCollisionHandler *handler = cpSpaceAddWildcardHandler(space, COLLISION_TYPE_STICKY);
-	handler.preSolveFunc = StickyPreSolve;
-	handler.separateFunc = StickySeparate;
+	handler.preSolveFunc = &StickyPreSolve;
+	handler.separateFunc = &StickySeparate;
 	
 	return space;
 }

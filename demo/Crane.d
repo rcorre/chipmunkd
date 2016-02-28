@@ -51,7 +51,7 @@ update(cpSpace *space, double dt)
 	cpSpaceStep(space, dt);
 }
 
-enum COLLISION_TYPES {
+enum {
 	HOOK_SENSOR = 1,
 	CRATE,
 };
@@ -70,12 +70,13 @@ HookCrate(cpArbiter *arb, cpSpace *space, void *data)
 		// Get pointers to the two bodies in the collision pair and define local variables for them.
 		// Their order matches the order of the collision types passed
 		// to the collision handler this function was defined for
-		CP_ARBITER_GET_BODIES(arb, hook, crate);
+		cpBody* hook, crate;
+		cpArbiterGetBodies(arb, &hook, &crate);
 		
 		// additions and removals can't be done in a normal callback.
 		// Schedule a post step callback to do it.
 		// Use the hook as the key and pass along the arbiter.
-		cpSpaceAddPostStepCallback(space, cast(cpPostStepFunc)AttachHook, hook, crate);
+		cpSpaceAddPostStepCallback(space, cast(cpPostStepFunc)&AttachHook, hook, crate);
 	}
 	
 	return cpTrue; // return value is ignored for sensor callbacks anyway
@@ -149,7 +150,7 @@ init()
 	cpShapeSetCollisionType(shape, CRATE);
 	
 	cpCollisionHandler *handler = cpSpaceAddCollisionHandler(space, HOOK_SENSOR, CRATE);
-	handler.beginFunc = cast(cpCollisionBeginFunc)HookCrate;
+	handler.beginFunc = cast(cpCollisionBeginFunc)&HookCrate;
 	
 	
 	return space;

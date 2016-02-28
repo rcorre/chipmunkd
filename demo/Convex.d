@@ -22,6 +22,9 @@
 import chipmunk;
 import chipmunk.chipmunk_unsafe;
 
+import std.string;
+import core.stdc.stdlib;
+
 import ChipmunkDemo;
 
 enum DENSITY = (1.0/10000.0);
@@ -70,7 +73,7 @@ update(cpSpace *space, double dt)
 static cpSpace *
 init()
 {
-	ChipmunkDemoMessageString = "Right click and drag to change the blocks's shape.";
+	ChipmunkDemoMessageString = "Right click and drag to change the blocks's shape.".toStringz;
 	
 	cpSpace *space = cpSpaceNew();
 	cpSpaceSetIterations(space, 30);

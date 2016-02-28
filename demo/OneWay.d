@@ -22,9 +22,7 @@
 import chipmunk;
 import ChipmunkDemo;
 
-enum CollisionTypes {
-	COLLISION_TYPE_ONE_WAY = 1,
-};
+enum COLLISION_TYPE_ONE_WAY = 1;
 
 struct OneWayPlatform {
 	cpVect n; // direction objects may pass through
@@ -32,10 +30,11 @@ struct OneWayPlatform {
 
 static OneWayPlatform platformInstance;
 
-static cpBool
+extern(C) static cpBool
 PreSolve(cpArbiter *arb, cpSpace *space, void *ignore)
 {
-	CP_ARBITER_GET_SHAPES(arb, a, b);
+	cpShape* a, b;
+	cpArbiterGetShapes(arb, &a, &b);
 	OneWayPlatform *platform = cast(OneWayPlatform *)cpShapeGetUserData(a);
 		
 	if(cpvdot(cpArbiterGetNormal(arb), platform.n) < 0){
@@ -103,7 +102,7 @@ init()
 	cpShapeSetCollisionType(shape, 2);
 	
 	cpCollisionHandler *handler = cpSpaceAddWildcardHandler(space, COLLISION_TYPE_ONE_WAY);
-	handler.preSolveFunc = PreSolve;
+	handler.preSolveFunc = &PreSolve;
 	
 	return space;
 }

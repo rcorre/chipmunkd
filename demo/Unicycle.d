@@ -21,6 +21,7 @@
  
 import chipmunk;
 import ChipmunkDemo;
+import core.stdc.math;
 
 static cpBody *balance_body;
 static cpFloat balance_sin = 0.0;
@@ -41,7 +42,7 @@ bias_coef(cpFloat errorBias, cpFloat dt)
 	return 1.0f - cpfpow(errorBias, dt);
 }
 
-static void motor_preSolve(cpConstraint *motor, cpSpace *space)
+extern(C) static void motor_preSolve(cpConstraint *motor, cpSpace *space)
 {
 	cpFloat dt = cpSpaceGetCurrentTimeStep(space);
 	
@@ -145,7 +146,7 @@ init()
 	cpSpaceAddConstraint(space, cpDampedSpringNew(balance_body, wheel_body, anchorA, cpvzero, 0.0, 6.0e2, 30.0));
 	
 	motor = cpSpaceAddConstraint(space, cpSimpleMotorNew(wheel_body, balance_body, 0.0));
-	cpConstraintSetPreSolveFunc(motor, motor_preSolve);
+	cpConstraintSetPreSolveFunc(motor, &motor_preSolve);
 	
 	{
 		cpFloat width = 100.0;

@@ -42,7 +42,7 @@ static cpFloat remainingBoost = 0;
 static cpBool grounded = cpFalse;
 static cpBool lastJumpState = cpFalse;
 
-static void
+extern(C) static void
 SelectPlayerGroundNormal(cpBody *body_, cpArbiter *arb, cpVect *groundNormal){
 	cpVect n = cpvneg(cpArbiterGetNormal(arb));
 	
@@ -51,14 +51,14 @@ SelectPlayerGroundNormal(cpBody *body_, cpArbiter *arb, cpVect *groundNormal){
 	}
 }
 
-static void
+extern(C) static void
 playerUpdateVelocity(cpBody *body_, cpVect gravity, cpFloat damping, cpFloat dt)
 {
 	int jumpState = (ChipmunkDemoKeyboard.y > 0.0f);
 	
 	// Grab the grounding normal from last frame
 	cpVect groundNormal = cpvzero;
-	cpBodyEachArbiter(playerBody, cast(cpBodyArbiterIteratorFunc)SelectPlayerGroundNormal, &groundNormal);
+	cpBodyEachArbiter(playerBody, cast(cpBodyArbiterIteratorFunc)&SelectPlayerGroundNormal, &groundNormal);
 	
 	grounded = (groundNormal.y > 0.0);
 	if(groundNormal.y < 0.0f) remainingBoost = 0.0f;
@@ -103,7 +103,7 @@ update(cpSpace *space, double dt)
 	cpSpaceStep(space, dt);
 	
 	remainingBoost -= dt;
-	lastJumpState = jumpState;
+	lastJumpState = cast(ubyte) jumpState;
 }
 
 static cpSpace *
@@ -137,7 +137,7 @@ init()
 	// Set up the player
 	body_ = cpSpaceAddBody(space, cpBodyNew(1.0f, INFINITY));
 	body_.p = cpv(0, -200);
-	body_.velocity_func = playerUpdateVelocity;
+	body_.velocity_func = &playerUpdateVelocity;
 	playerBody = body_;
 
 	shape = cpSpaceAddShape(space, cpBoxShapeNew2(body_, cpBBNew(-15.0, -27.5, 15.0, 27.5), 10.0));

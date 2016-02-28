@@ -32,7 +32,7 @@ update(cpSpace *space, double dt)
 	cpSpaceStep(space, dt);
 }
 
-static void
+extern(C) static void
 planetGravityVelocityFunc(cpBody *body_, cpVect gravity, cpFloat damping, cpFloat dt)
 {
 	// Gravitational acceleration is proportional to the inverse square of
@@ -62,18 +62,18 @@ add_box(cpSpace *space)
 	const cpFloat size = 10.0f;
 	const cpFloat mass = 1.0f;
 	
-	cpVect verts[] = {
+	cpVect verts[] = [
 		cpv(-size,-size),
 		cpv(-size, size),
 		cpv( size, size),
 		cpv( size,-size),
-	};
+	];
 	
 	cpFloat radius = cpvlength(cpv(size, size));
 	cpVect pos = rand_pos(radius);
 	
-	cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForPoly(mass, 4, verts, cpvzero, 0.0f)));
-	cpBodySetVelocityUpdateFunc(body_, planetGravityVelocityFunc);
+	cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForPoly(mass, 4, verts.ptr, cpvzero, 0.0f)));
+	cpBodySetVelocityUpdateFunc(body_, &planetGravityVelocityFunc);
 	cpBodySetPosition(body_, pos);
 
 	// Set the box's velocity to put it into a circular orbit from its
@@ -87,7 +87,7 @@ add_box(cpSpace *space)
 	cpBodySetAngularVelocity(body_, v);
 	cpBodySetAngle(body_, cpfatan2(pos.y, pos.x));
 
-	cpShape *shape = cpSpaceAddShape(space, cpPolyShapeNew(body_, 4, verts, cpTransformIdentity, 0.0));
+	cpShape *shape = cpSpaceAddShape(space, cpPolyShapeNew(body_, 4, verts.ptr, cpTransformIdentity, 0.0));
 	cpShapeSetElasticity(shape, 0.0f);
 	cpShapeSetFriction(shape, 0.7f);
 }

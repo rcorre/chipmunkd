@@ -22,6 +22,8 @@
 import chipmunk;
 import ChipmunkDemo;
 
+import std.math;
+
 static cpVect QUERY_START = {0,0};
 
 static void
@@ -108,10 +110,10 @@ init()
 			verts[i] = cpv(30*cos(angle), 30*sin(angle));
 		}
 		
-		cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForPoly(mass, NUM_VERTS, verts, cpvzero, 0.0f)));
+		cpBody *body_ = cpSpaceAddBody(space, cpBodyNew(mass, cpMomentForPoly(mass, NUM_VERTS, verts.ptr, cpvzero, 0.0f)));
 		cpBodySetPosition(body_, cpv(50.0f, 30.0f));
 		
-		cpSpaceAddShape(space, cpPolyShapeNew(body_, NUM_VERTS, verts, cpTransformIdentity, 10.0f));
+		cpSpaceAddShape(space, cpPolyShapeNew(body_, NUM_VERTS, verts.ptr, cpTransformIdentity, 10.0f));
 	}
 	
 	{ // add a circle
