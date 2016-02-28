@@ -10,6 +10,8 @@ extern (C):
 
 extern __gshared const(char)* cpVersionString;
 
+void cpAssertHard(T)(lazy T cond, string msg) { assert(cond, msg); }
+
 void cpMessage (const(char)* condition, const(char)* file, int line, int isError, int isHardError, const(char)* message, ...);
 cpFloat cpMomentForCircle (cpFloat m, cpFloat r1, cpFloat r2, cpVect offset);
 cpFloat cpAreaForCircle (cpFloat r1, cpFloat r2);
