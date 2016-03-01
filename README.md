@@ -37,7 +37,7 @@ upstream version.
 
 # License
 
-Both chipmunkd and the Chipmunk2D are licensed under the 
+Both chipmunkd and Chipmunk2D are licensed under the 
 [MIT License](https://opensource.org/licenses/MIT).
 
 # Credits
