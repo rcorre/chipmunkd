@@ -2,10 +2,12 @@ module chipmunk.cpTransform;
 
 import chipmunk.chipmunk_types;
 import chipmunk.cpBB;
+import chipmunk.cpVect;
 
 extern (C):
 
-extern __gshared const cpTransform cpTransformIdentity;
+/// Identity transform matrix.
+static const cpTransform cpTransformIdentity = {1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
 
 /// Construct a new transform matrix.
 /// (a, b) is the x basis vector.

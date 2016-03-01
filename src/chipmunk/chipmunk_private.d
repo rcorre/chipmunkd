@@ -1,6 +1,7 @@
 module chipmunk.chipmunk_private;
 
 import chipmunk.chipmunk;
+import chipmunk.cpVect;
 import chipmunk.chipmunk_types;
 import chipmunk.chipmunk_structs;
 import chipmunk.cpSpace;
@@ -10,6 +11,11 @@ import chipmunk.cpShape;
 import chipmunk.cpBody;
 
 extern (C):
+
+enum ulong CP_HASH_COEF = 3344921057;
+auto CP_HASH_PAIR(TA, TB)(TA A, TB B) {
+    return cast(cpHashValue)(A)*CP_HASH_COEF ^ cast(cpHashValue)(B)*CP_HASH_COEF;
+}
 
 alias ubyte function (void*, void*) cpHashSetEqlFunc;
 alias void* function (void*, void*) cpHashSetTransFunc;

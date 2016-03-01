@@ -8,8 +8,10 @@ import chipmunk.cpArbiter;
 
 extern (C):
 
-extern __gshared const cpShapeFilter CP_SHAPE_FILTER_ALL;
-extern __gshared const cpShapeFilter CP_SHAPE_FILTER_NONE;
+static const cpShapeFilter CP_SHAPE_FILTER_ALL = {CP_NO_GROUP, CP_ALL_CATEGORIES, CP_ALL_CATEGORIES};
+
+/// Collision filter value for a shape that does not collide with anything.
+static const cpShapeFilter CP_SHAPE_FILTER_NONE = {CP_NO_GROUP, ~CP_ALL_CATEGORIES, ~CP_ALL_CATEGORIES};
 
 struct cpPointQueryInfo
 {
