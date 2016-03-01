@@ -34,7 +34,14 @@ struct cpShapeFilter
     cpBitmask mask;
 }
 
-cpShapeFilter cpShapeFilterNew (cpGroup group, cpBitmask categories, cpBitmask mask);
+// inlined in chipmunk header
+static cpShapeFilter
+cpShapeFilterNew(cpGroup group, cpBitmask categories, cpBitmask mask)
+{
+	cpShapeFilter filter = {group, categories, mask};
+	return filter;
+}
+
 void cpShapeDestroy (cpShape* shape);
 void cpShapeFree (cpShape* shape);
 cpBB cpShapeCacheBB (cpShape* shape);

@@ -122,8 +122,6 @@ static cpFloat cpfclamp01(cpFloat f)
 	return cpfmax(0.0f, cpfmin(f, 1.0f));
 }
 
-
-
 /// Linearly interpolate (or extrapolate) between @c f1 and @c f2 by @c t percent.
 static cpFloat cpflerp(cpFloat f1, cpFloat f2, cpFloat t)
 {

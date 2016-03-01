@@ -70,14 +70,75 @@ cpSpatialIndex* cpSweep1DInit (cpSweep1D* sweep, cpSpatialIndexBBFunc bbfunc, cp
 cpSpatialIndex* cpSweep1DNew (cpSpatialIndexBBFunc bbfunc, cpSpatialIndex* staticIndex);
 void cpSpatialIndexFree (cpSpatialIndex* index);
 void cpSpatialIndexCollideStatic (cpSpatialIndex* dynamicIndex, cpSpatialIndex* staticIndex, cpSpatialIndexQueryFunc func, void* data);
-void cpSpatialIndexDestroy (cpSpatialIndex* index);
-int cpSpatialIndexCount (cpSpatialIndex* index);
-void cpSpatialIndexEach (cpSpatialIndex* index, cpSpatialIndexIteratorFunc func, void* data);
-cpBool cpSpatialIndexContains (cpSpatialIndex* index, void* obj, cpHashValue hashid);
-void cpSpatialIndexInsert (cpSpatialIndex* index, void* obj, cpHashValue hashid);
-void cpSpatialIndexRemove (cpSpatialIndex* index, void* obj, cpHashValue hashid);
-void cpSpatialIndexReindex (cpSpatialIndex* index);
-void cpSpatialIndexReindexObject (cpSpatialIndex* index, void* obj, cpHashValue hashid);
-void cpSpatialIndexQuery (cpSpatialIndex* index, void* obj, cpBB bb, cpSpatialIndexQueryFunc func, void* data);
-void cpSpatialIndexSegmentQuery (cpSpatialIndex* index, void* obj, cpVect a, cpVect b, cpFloat t_exit, cpSpatialIndexSegmentQueryFunc func, void* data);
-void cpSpatialIndexReindexQuery (cpSpatialIndex* index, cpSpatialIndexQueryFunc func, void* data);
+
+// inlined in chipmunk headers:
+
+static void cpSpatialIndexDestroy(cpSpatialIndex *index)
+{
+	if(index.klass) index.klass.destroy(index);
+}
+
+/// Get the number of objects in the spatial index.
+static int cpSpatialIndexCount(cpSpatialIndex *index)
+{
+	return index.klass.count(index);
+}
+
+/// Iterate the objects in the spatial index. @c func will be called once for each object.
+static void cpSpatialIndexEach(cpSpatialIndex *index, cpSpatialIndexIteratorFunc func, void *data)
+{
+	index.klass.each(index, func, data);
+}
+
+/// Returns true if the spatial index contains the given object.
+/// Most spatial indexes use hashed storage, so you must provide a hash value too.
+static cpBool cpSpatialIndexContains(cpSpatialIndex *index, void *obj, cpHashValue hashid)
+{
+	return index.klass.contains(index, obj, hashid);
+}
+
+/// Add an object to a spatial index.
+/// Most spatial indexes use hashed storage, so you must provide a hash value too.
+static void cpSpatialIndexInsert(cpSpatialIndex *index, void *obj, cpHashValue hashid)
+{
+	index.klass.insert(index, obj, hashid);
+}
+
+/// Remove an object from a spatial index.
+/// Most spatial indexes use hashed storage, so you must provide a hash value too.
+static void cpSpatialIndexRemove(cpSpatialIndex *index, void *obj, cpHashValue hashid)
+{
+	index.klass.remove(index, obj, hashid);
+}
+
+/// Perform a full reindex of a spatial index.
+static void cpSpatialIndexReindex(cpSpatialIndex *index)
+{
+	index.klass.reindex(index);
+}
+
+/// Reindex a single object in the spatial index.
+static void cpSpatialIndexReindexObject(cpSpatialIndex *index, void *obj, cpHashValue hashid)
+{
+	index.klass.reindexObject(index, obj, hashid);
+}
+
+/// Perform a rectangle query against the spatial index, calling @c func for each potential match.
+static void cpSpatialIndexQuery(cpSpatialIndex *index, void *obj, cpBB bb, cpSpatialIndexQueryFunc func, void *data)
+{
+	index.klass.query(index, obj, bb, func, data);
+}
+
+/// Perform a segment query against the spatial index, calling @c func for each potential match.
+static void cpSpatialIndexSegmentQuery(cpSpatialIndex *index, void *obj, cpVect a, cpVect b, cpFloat t_exit, cpSpatialIndexSegmentQueryFunc func, void *data)
+{
+	index.klass.segmentQuery(index, obj, a, b, t_exit, func, data);
+}
+
+/// Simultaneously reindex and find all colliding objects.
+/// @c func will be called once for each potentially overlapping pair of objects found.
+/// If the spatial index was initialized with a static index, it will collide it's objects against that as well.
+static void cpSpatialIndexReindexQuery(cpSpatialIndex *index, cpSpatialIndexQueryFunc func, void *data)
+{
+	index.klass.reindexQuery(index, func, data);
+}
