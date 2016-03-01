@@ -430,7 +430,7 @@ RunDemo(int index)
 	LastTime = glfwGetTime();
 	
 	mouse_joint = null;
-	//ChipmunkDemoMessageString = "";
+	ChipmunkDemoMessageString = "";
 	max_arbiters = 0;
 	max_points = 0;
 	max_constraints = 0;

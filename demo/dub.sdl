@@ -3,8 +3,15 @@ description "A minimal D application."
 copyright "Copyright © 2016, rcorre"
 authors "rcorre"
 
+targetType "executable"
 sourcePaths "."
 importPaths "." "../src"
 mainSourceFile "ChipmunkDemo.d"
 
 buildRequirements "silenceWarnings"
+
+dependency "chipmunkd" path=".."
+
+libs "chipmunk"
+libs "glfw2"
+libs "glew"

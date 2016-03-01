@@ -21,6 +21,7 @@
  
 import chipmunk;
 import ChipmunkDemo;
+import chipmunk.cpShape;
 
 static cpConstraint *motor;
 
