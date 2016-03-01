@@ -107,35 +107,35 @@ cpShapeFilter NOT_GRABBABLE_FILTER = {CP_NO_GROUP, ~GRABBABLE_MASK_BIT, ~GRABBAB
 cpVect translate = {0, 0};
 cpFloat scale = 1.0;
 
-static void ShapeFreeWrap(cpSpace *space, cpShape *shape, void *unused){
+extern(C) static void ShapeFreeWrap(cpSpace *space, cpShape *shape, void *unused){
 	cpSpaceRemoveShape(space, shape);
 	cpShapeFree(shape);
 }
 
-static void PostShapeFree(cpShape *shape, cpSpace *space){
+extern(C) static void PostShapeFree(cpShape *shape, cpSpace *space){
 	cpSpaceAddPostStepCallback(space, cast(cpPostStepFunc)&ShapeFreeWrap, shape, null);
 }
 
-static void ConstraintFreeWrap(cpSpace *space, cpConstraint *constraint, void *unused){
+extern(C) static void ConstraintFreeWrap(cpSpace *space, cpConstraint *constraint, void *unused){
 	cpSpaceRemoveConstraint(space, constraint);
 	cpConstraintFree(constraint);
 }
 
-static void PostConstraintFree(cpConstraint *constraint, cpSpace *space){
+extern(C) static void PostConstraintFree(cpConstraint *constraint, cpSpace *space){
 	cpSpaceAddPostStepCallback(space, cast(cpPostStepFunc)&ConstraintFreeWrap, constraint, null);
 }
 
-static void BodyFreeWrap(cpSpace *space, cpBody *body_, void *unused){
+extern(C) static void BodyFreeWrap(cpSpace *space, cpBody *body_, void *unused){
 	cpSpaceRemoveBody(space, body_);
 	cpBodyFree(body_);
 }
 
-static void PostBodyFree(cpBody *body_, cpSpace *space){
+extern(C) static void PostBodyFree(cpBody *body_, cpSpace *space){
 	cpSpaceAddPostStepCallback(space, cast(cpPostStepFunc)&BodyFreeWrap, body_, null);
 }
 
 // Safe and future proof way to remove and free all objects that have been added to the space.
-void
+extern(C) void
 ChipmunkDemoFreeSpaceChildren(cpSpace *space)
 {
 	// Must remove these BEFORE freeing the body_ or you will access dangling pointers.
@@ -145,23 +145,23 @@ ChipmunkDemoFreeSpaceChildren(cpSpace *space)
 	cpSpaceEachBody(space, cast(cpSpaceBodyIteratorFunc)&PostBodyFree, space);
 }
 
-static void
+extern(C) static void
 DrawCircle(cpVect p, cpFloat a, cpFloat r, cpSpaceDebugColor outline, cpSpaceDebugColor fill, cpDataPointer data)
 {ChipmunkDebugDrawCircle(p, a, r, outline, fill);}
 
-static void
+extern(C) static void
 DrawSegment(cpVect a, cpVect b, cpSpaceDebugColor color, cpDataPointer data)
 {ChipmunkDebugDrawSegment(a, b, color);}
 
-static void
+extern(C) static void
 DrawFatSegment(cpVect a, cpVect b, cpFloat r, cpSpaceDebugColor outline, cpSpaceDebugColor fill, cpDataPointer data)
 {ChipmunkDebugDrawFatSegment(a, b, r, outline, fill);}
 
-static void
+extern(C) static void
 DrawPolygon(int count, const cpVect *verts, cpFloat r, cpSpaceDebugColor outline, cpSpaceDebugColor fill, cpDataPointer data)
 {ChipmunkDebugDrawPolygon(count, verts, r, outline, fill);}
 
-static void
+extern(C) static void
 DrawDot(cpFloat size, cpVect pos, cpSpaceDebugColor color, cpDataPointer data)
 {ChipmunkDebugDrawDot(size, pos, color);}
 
