@@ -6543,3 +6543,6 @@ alias glGetRenderbufferParameteriv = __glewGetRenderbufferParameteriv;
 alias glIsFramebuffer = __glewIsFramebuffer;
 alias glIsRenderbuffer = __glewIsRenderbuffer;
 alias glRenderbufferStorage = __glewRenderbufferStorage;
+
+alias glBindVertexArrayAPPLE = __glewBindVertexArrayAPPLE;
+alias glGenVertexArraysAPPLE = __glewGenVertexArraysAPPLE;
