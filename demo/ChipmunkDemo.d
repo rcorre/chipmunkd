@@ -161,7 +161,7 @@ extern(C) static void
 DrawPolygon(int count, const cpVect *verts, cpFloat r, cpSpaceDebugColor outline, cpSpaceDebugColor fill, cpDataPointer data)
 {ChipmunkDebugDrawPolygon(count, verts, r, outline, fill);}
 
-extern(C) static void
+static void
 DrawDot(cpFloat size, cpVect pos, cpSpaceDebugColor color, cpDataPointer data)
 {ChipmunkDebugDrawDot(size, pos, color);}
 
