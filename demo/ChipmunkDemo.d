@@ -648,6 +648,7 @@ import Convex;
 import Unicycle;
 import Sticky;
 import Shatter;
+import Bench;
 
 int
 main(string[] args)
@@ -658,7 +659,7 @@ main(string[] args)
 		LogoSmash.LogoSmash,//A
 		PyramidStack.PyramidStack,//B
 		Plink.Plink,//C
-		//BouncyHexagons.BouncyHexagons,//D
+		Bench.BouncyHexagons,//D
 		Tumble.Tumble,//E
 		PyramidTopple.PyramidTopple,//F
 		Planet.Planet,//G
