@@ -28,13 +28,13 @@ static cpBody *ballBody;
 
 // If your compiler supports blocks (Clang or some GCC versions),
 // You can use the block based iterators instead of the function ones to make your life easier.
-static void
+extern(C) static void
 ScaleIterator(cpBody *body_, cpArbiter *arb, cpVect *sum)
 {
 	(*sum) = cpvadd(*sum, cpArbiterTotalImpulse(arb));
 }
 
-static void
+extern(C) static void
 BallIterator(cpBody *body_, cpArbiter *arb, int *count)
 {
 	// body_ is the body_ we are iterating the arbiters for.
@@ -51,7 +51,7 @@ struct CrushingContext {
 	cpVect vectorSum;
 };
 
-static void
+extern(C) static void
 EstimateCrushing(cpBody *body_, cpArbiter *arb, CrushingContext *context)
 {
 	cpVect j = cpArbiterTotalImpulse(arb);
