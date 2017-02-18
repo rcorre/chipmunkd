@@ -43,7 +43,7 @@ k_scalar_body(cpBody *body_, cpVect point, cpVect n)
 	return 1.0f/cpBodyGetMass(body_) + rcn*rcn/cpBodyGetMoment(body_);
 }
 
-static cpBool
+extern(C) static cpBool
 waterPreSolve(cpArbiter *arb, cpSpace *space, void *ptr)
 {
 	cpShape* water, poly;
