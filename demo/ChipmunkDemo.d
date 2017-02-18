@@ -93,7 +93,7 @@ double ChipmunkDemoTime;
 cpVect ChipmunkDemoMouse;
 cpBool ChipmunkDemoRightClick = cpFalse;
 cpBool ChipmunkDemoRightDown = cpFalse;
-cpVect ChipmunkDemoKeyboard = {};
+cpVect ChipmunkDemoKeyboard = cpvzero;
 
 static cpBody *mouse_body = null;
 static cpConstraint *mouse_joint = null;
