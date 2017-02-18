@@ -56,14 +56,14 @@ enum {
 	CRATE,
 };
 
-static void
+extern(C) static void
 AttachHook(cpSpace *space, cpBody *hook, cpBody *crate)
 {
 	hookJoint = cpSpaceAddConstraint(space, cpPivotJointNew(hook, crate, cpBodyGetPosition(hook)));
 }
 
 
-static cpBool
+extern(C) static cpBool
 HookCrate(cpArbiter *arb, cpSpace *space, void *data)
 {
 	if(hookJoint == null){
