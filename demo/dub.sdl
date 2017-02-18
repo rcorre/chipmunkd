@@ -13,5 +13,7 @@ buildRequirements "silenceWarnings"
 dependency "chipmunkd" path=".."
 
 libs "chipmunk"
-libs "glfw2"
+libs "glfw"
 libs "glew"
+libs "GL"
+libs "GLU"
