@@ -7,6 +7,7 @@ import core.stdc.float_;
 import chipmunk.cpVect;
 
 extern (C):
+@nogc nothrow:
 
 enum CP_NO_GROUP = 0;
 enum cpBitmask CP_ALL_CATEGORIES = ~0;

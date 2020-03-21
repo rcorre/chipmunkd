@@ -12,6 +12,7 @@ import chipmunk.cpDampedRotarySpring;
 import chipmunk.cpSpatialIndex;
 
 extern (C):
+@nogc nothrow:
 
 alias cpBB function (cpShape*, cpTransform) cpShapeCacheDataImpl;
 alias void function (cpShape*) cpShapeDestroyImpl;

@@ -6,6 +6,7 @@ import chipmunk.chipmunk_structs;
 import chipmunk.cpBB;
 
 extern (C):
+@nogc nothrow:
 
 alias cpBB function (void*) cpSpatialIndexBBFunc;
 alias void function (void*, void*) cpSpatialIndexIteratorFunc;
