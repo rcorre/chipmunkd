@@ -7,6 +7,7 @@ import chipmunk.cpBB;
 import chipmunk.cpArbiter;
 
 extern (C):
+@nogc nothrow:
 
 static const cpShapeFilter CP_SHAPE_FILTER_ALL = {CP_NO_GROUP, CP_ALL_CATEGORIES, CP_ALL_CATEGORIES};
 

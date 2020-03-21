@@ -1,7 +1,7 @@
 chipmunkd
 ===
 
-D bindings to the 7.X versions of [Chipmunk2D](http://chipmunk-physics.net/), a
+D bindings (-betterC) to the 7.X versions of [Chipmunk2D](http://chipmunk-physics.net/), a
 physics library.
 
 # Use

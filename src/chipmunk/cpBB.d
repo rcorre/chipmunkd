@@ -4,6 +4,7 @@ import chipmunk.chipmunk_types;
 import chipmunk.cpVect;
 
 extern (C):
+@nogc nothrow:
 
 struct cpBB
 {

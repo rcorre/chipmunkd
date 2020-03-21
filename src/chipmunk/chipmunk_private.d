@@ -11,6 +11,7 @@ import chipmunk.cpShape;
 import chipmunk.cpBody;
 
 extern (C):
+@nogc nothrow:
 
 enum ulong CP_HASH_COEF = 3344921057;
 auto CP_HASH_PAIR(TA, TB)(TA A, TB B) {
@@ -238,8 +239,8 @@ static void
 cpSpaceUncacheArbiter(cpSpace *space, cpArbiter *arb)
 {
 	const cpShape* a = arb.a, b = arb.b;
-	const cpShape*[] shape_pair = [a, b];
-	cpHashValue arbHashID = CP_HASH_PAIR(cast(cpHashValue)a, cast(cpHashValue)b);
+	const cpShape*[2] shape_pair = [a, b];
+	cpHashValue arbHashID = cast(uint)CP_HASH_PAIR(cast(cpHashValue)a, cast(cpHashValue)b);
 	cpHashSetRemove(space.cachedArbiters, arbHashID, cast(void*) shape_pair.ptr);
 	cpArrayDeleteObj(space.arbiters, arb);
 }

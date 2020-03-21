@@ -5,6 +5,7 @@ import chipmunk.cpBB;
 import chipmunk.cpVect;
 
 extern (C):
+@nogc nothrow:
 
 /// Identity transform matrix.
 static const cpTransform cpTransformIdentity = {1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f};

@@ -4,6 +4,7 @@ import chipmunk.chipmunk_types;
 import chipmunk.chipmunk_structs;
 
 extern (C):
+@nogc nothrow:
 
 enum CP_MAX_CONTACTS_PER_ARBITER = 2;
 

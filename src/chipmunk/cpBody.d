@@ -3,6 +3,7 @@ import chipmunk.chipmunk_types;
 import chipmunk.chipmunk_structs;
 
 extern (C):
+@nogc nothrow:
 
 alias void function (cpBody*, cpVect, double, double) cpBodyVelocityFunc;
 alias void function (cpBody*, double) cpBodyPositionFunc;
